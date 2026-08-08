@@ -5,12 +5,16 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
+# job の id はそのまま required status check の名前になる。
+# 設定コマンドに渡しやすいよう ASCII のまま維持し、日本語の name: は付けない。
 jobs:
-  sync:
-    name: AGENTS.md と copilot-instructions.md の一致を検査
+  sync-instructions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: 2 ファイルが byte-identical であることを確認
         run: |
