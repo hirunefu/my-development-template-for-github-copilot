@@ -1,0 +1,26 @@
+name: 指示ファイルの同期チェック
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  sync:
+    name: AGENTS.md と copilot-instructions.md の一致を検査
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 2 ファイルが byte-identical であることを確認
+        run: |
+          if cmp -s AGENTS.md .github/copilot-instructions.md; then
+            echo "一致を確認しました。"
+            exit 0
+          fi
+          echo "::error::AGENTS.md と .github/copilot-instructions.md の内容が一致しません。"
+          echo "両ファイルは byte-identical に保つ必要があります。"
+          echo "理由は docs/adr/0001-duplicate-instruction-files.md を参照してください。"
+          echo "--- diff ---"
+          diff AGENTS.md .github/copilot-instructions.md || true
+          exit 1
