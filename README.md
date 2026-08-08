@@ -7,10 +7,11 @@
 ## 使い方
 
 1. GitHub の **Use this template** から新しいリポジトリを作る
-2. triage ラベルを作成する（コマンドは `docs/agents/triage-labels.md` にある）
-3. `AGENTS.md` をプロジェクトに合わせて調整する。**変更したら `.github/copilot-instructions.md` にも同じ内容をコピーする**（CI が一致を検査する）
-4. **ブランチ保護を設定する**（下記参照）。これを省くと CI は赤い印を付けるだけで、マージを止められない
-5. 用語が固まったら `CONTEXT.md`、設計を決めたら `docs/adr/` に追記する。先回りして空のファイルを作る必要はない
+2. skill を導入する（`docs/skills.md` を参照）。**`/setup-matt-pocock-skills` は実行しないこと** — このテンプレートの設定を上書きしてしまう
+3. triage ラベルを作成する（コマンドは `docs/agents/triage-labels.md` にある）
+4. `AGENTS.md` をプロジェクトに合わせて調整する。**変更したら `.github/copilot-instructions.md` にも同じ内容をコピーする**（CI が一致を検査する）
+5. **ブランチ保護を設定する**（下記参照）。これを省くと CI は赤い印を付けるだけで、マージを止められない
+6. 用語が固まったら `CONTEXT.md`、設計を決めたら `docs/adr/` に追記する。先回りして空のファイルを作る必要はない
 
 ## 収録物
 
@@ -22,11 +23,16 @@
 | `CONTEXT.md` | ドメイン用語集 |
 | `docs/adr/` | 設計決定とその理由の記録 |
 | `docs/agents/` | issue tracker、triage ラベル、ドメイン文書の運用規約 |
+| `docs/skills.md` | skill の導入手順と使い方 |
+| `docs/skills-catalog.md` | 上流の skill 一覧（生成物） |
 | `.github/workflows/sync-instructions.yml` | 指示ファイル 2 つの同期を検査する CI |
 | `.github/workflows/security.yml` | gitleaks と SkillSpector による検査 |
 | `.github/scripts/check-skillspector.py` | SkillSpector のレポートを読んで合否を判定する |
+| `.github/scripts/gen-skills-catalog.py` | skill カタログを上流から生成する |
 
 なぜ指示ファイルが 2 つあるのかは `docs/adr/0001-duplicate-instruction-files.md` に記録してある。
+
+このテンプレートは [mattpocock/skills](https://github.com/mattpocock/skills) の skill 群を前提にしている。導入していなくてもリポジトリは壊れないが、`docs/agents/` の設定は使われないままになる。
 
 ## CI の検査
 
@@ -87,6 +93,7 @@ Web UI なら Settings → Branches → Add branch protection rule で、Require
 | gitleaks | `security.yml` の `GITLEAKS_VERSION` |
 | SkillSpector | `security.yml` の `SKILLSPECTOR_VERSION` |
 | actions/* | 各 workflow の `uses:` |
+| skills CLI | `docs/skills.md` の導入コマンドと更新コマンド |
 
 ## 意図的に入れていないもの
 
