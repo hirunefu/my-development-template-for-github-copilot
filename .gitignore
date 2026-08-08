@@ -1,0 +1,6 @@
+# エージェントの個人作業領域（issue tracker の探索層）
+# 詳細は docs/agents/issue-tracker.md を参照
+/.scratch/
+
+# Claude Code の個人設定
+CLAUDE.local.md

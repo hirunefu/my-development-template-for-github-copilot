@@ -1,0 +1,109 @@
+name: セキュリティ検査
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# job の id はそのまま required status check の名前になる。
+# 設定コマンドに渡しやすいよう ASCII のまま維持し、日本語の name: は付けない。
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+    env:
+      GITLEAKS_VERSION: 8.30.1
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # 履歴に埋まった秘密を検出するため全コミットを取得する
+          fetch-depth: 0
+
+      - name: gitleaks を取得し、チェックサムを検証する
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
+          archive="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -sSfL -o "$archive" "${base}/${archive}"
+          curl -sSfL -o checksums.txt "${base}/gitleaks_${GITLEAKS_VERSION}_checksums.txt"
+          # 照合結果をパイプで sha256sum に渡さないこと。取得したものを
+          # シェルに流し込むパターンとして誤検知される。
+          # 理由は docs/adr/0002-gitleaks-cli-over-action.md を参照。
+          grep "  ${archive}\$" checksums.txt > expected.sha256
+          sha256sum -c expected.sha256
+          tar xzf "$archive" gitleaks
+          ./gitleaks version
+
+      - name: 秘密の混入を検査する
+        run: |
+          set -euo pipefail
+          # --redact は必須。付けないと検出した秘密そのものが CI ログに出力され、
+          # public リポジトリでは漏洩を検知した瞬間に自分で公開することになる。
+          "$RUNNER_TEMP/gitleaks" git . \
+            --no-banner \
+            --redact \
+            --platform github \
+            --report-format json \
+            --report-path "$RUNNER_TEMP/gitleaks.json"
+
+      - name: 結果を Job Summary に出す
+        if: always()
+        run: |
+          set -uo pipefail
+          report="$RUNNER_TEMP/gitleaks.json"
+          {
+            echo "## gitleaks"
+            echo
+            if [ ! -f "$report" ]; then
+              echo "レポートが生成されなかった。スキャン自体が失敗した可能性がある。"
+            elif [ "$(tr -d '[:space:]' < "$report")" = "[]" ]; then
+              echo "秘密の混入は検出されなかった。"
+            else
+              count=$(python3 -c 'import json,sys; print(len(json.load(open(sys.argv[1]))))' "$report")
+              echo "**秘密の混入を検出した。** 件数: ${count}"
+              echo
+              echo '秘密そのものは `--redact` で伏字にしている。該当箇所はジョブのログを参照すること。'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  skillspector:
+    runs-on: ubuntu-latest
+    env:
+      SKILLSPECTOR_VERSION: v2.8.2
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: SkillSpector を導入する
+        run: pip install "git+https://github.com/NVIDIA/skillspector.git@${SKILLSPECTOR_VERSION}"
+
+      - name: エージェント資産を検査する
+        run: |
+          set -uo pipefail
+          # 判定は後段のスクリプトが JSON を読んで行うので、ここでは落とさない。
+          # レポートが欠けた場合はスクリプト側が失敗として扱う。
+          skillspector scan . --no-llm --format json     -o "$RUNNER_TEMP/skillspector.json" || true
+          skillspector scan . --no-llm --format markdown -o "$RUNNER_TEMP/skillspector.md"  || true
+
+      - name: レポートを Job Summary に出す
+        if: always()
+        run: |
+          set -uo pipefail
+          {
+            echo "## SkillSpector"
+            echo
+            if [ -f "$RUNNER_TEMP/skillspector.md" ]; then
+              cat "$RUNNER_TEMP/skillspector.md"
+            else
+              echo "レポートが生成されなかった。スキャン自体が失敗した可能性がある。"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: 判定する
+        run: python3 .github/scripts/check-skillspector.py "$RUNNER_TEMP/skillspector.json"
