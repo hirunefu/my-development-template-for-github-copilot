@@ -65,10 +65,14 @@ gh api -X PUT repos/{owner}/{repo}/branches/main/protection --input - <<'EOF'
   },
   "enforce_admins": false,
   "required_pull_request_reviews": null,
-  "restrictions": null
+  "restrictions": null,
+  "allow_force_pushes": false,
+  "allow_deletions": false
 }
 EOF
 ```
+
+`allow_force_pushes` と `allow_deletions` を false にしているのは、`AGENTS.md` の「git 履歴を書き換えない」を規約だけでなく機械的にも守らせるため。`required_pull_request_reviews` は `null` にしてある。個人リポジトリでは自分の PR を承認できず、レビュー必須にすると自分でマージできなくなるため。
 
 Web UI なら Settings → Branches → Add branch protection rule で、Require status checks to pass before merging に上記 3 つを指定する。
 
