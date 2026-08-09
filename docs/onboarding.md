@@ -128,16 +128,32 @@ triage で `needs-info` が付いたものは、情報が揃うまで実装に�
 
 ### skill が何をどこに書くか
 
+左が skill、右が保存先。**円柱は残るもの、破線は残らないもの。**
+
 ```mermaid
 flowchart LR
-    s1["/grilling<br/>/to-spec<br/>/wayfinder"] --> scratch[".scratch/<br/>個人・管理外<br/>消えてよい"]
-    s2["/grill-with-docs<br/>/domain-modeling"] --> mem["CONTEXT.md<br/>docs/adr/<br/>残る"]
-    s3["/to-tickets<br/>/triage"] --> task["タスク管理<br/>チケットとラベル<br/>残る"]
-    s4["/implement<br/>/tdd<br/>/resolving-merge-conflicts"] --> code["コードとテスト<br/>残る"]
-    s5["/code-review"] --> pr["変更提案のコメント"]
-    s6["/research /prototype<br/>/handoff /diagnosing-bugs<br/>など"] --> ask["保存先は決まっていない<br/>人間に確認する"]
-    scratch -.->|確定したら移す| mem
-    scratch -.->|確定したら移す| task
+    s1["/grilling<br/>/to-spec<br/>/wayfinder"] --> scratch
+    s2["/grill-with-docs<br/>/domain-modeling"] --> mem
+    s3["/to-tickets<br/>/triage"] --> task
+    s4["/implement<br/>/tdd<br/>/resolving-merge-conflicts"] --> code
+    s5["/code-review"] --> pr
+    s6["/research /prototype<br/>/handoff /diagnosing-bugs<br/>など"] --> ask
+
+    scratch[".scratch/ ── 残らない<br/>個人・管理外"]
+    pr["変更提案のコメント<br/>── 残らない"]
+    ask["保存先が未定<br/>人間に確認する"]
+
+    mem[("CONTEXT.md / docs/adr/<br/>── 残る")]
+    task[("タスク管理 ── 残る")]
+    code[("コードとテスト ── 残る")]
+
+    scratch -. 確定したら移す .-> mem
+    scratch -. 確定したら移す .-> task
+
+    classDef gone stroke-dasharray:6 4,stroke-width:2px
+    classDef kept stroke-width:3px
+    class scratch,pr,ask gone
+    class mem,task,code kept
 ```
 
 **`.scratch/` に書くものは消えてよい。** バージョン管理外で、他人には見えない。残したければ点線のとおり移す必要がある。
