@@ -109,10 +109,11 @@ gh api repos/{owner}/{repo}/branches/main/protection > /tmp/bp-backup.json
 
 ## 確認
 
-`docs/checklist.md` を通す。ただし**項目 1・2・4 は新規複写向け**なので、既存プロジェクトでは次のように読み替える。
+`python3 scripts/verify.py` を実行する。ただし新規複写を前提にした項目があるので、既存プロジェクトでは次のように読み替える。
 
-- 項目 1（テンプレートの説明の残り）— 該当しない。README は元のまま
-- 項目 2（`docs/template/` の残り）— コピーしていなければ該当しない
-- 項目 4（`docs/adr/` が空か）— 既存の ADR があるならそのまま。番号の重複だけ確認する
+- **テンプレートの説明が残っていない** — 該当しない。README は元のまま
+- **テンプレート自身の記録が消えている** — `docs/template/` をコピーしていなければ該当しない
+- **ADR が自分のものだけ** — 既存の ADR があるならそのまま。番号の重複だけ確認する
+- **用語集が自分のもの** — 既存の `CONTEXT.md` があるならそのまま
 
-GitHub 層を入れたなら `docs/github/checklist.md` も通す。
+GitHub 層を入れたなら、`gh` を認証した状態で実行すること。ラベル・ブランチ保護・required check の名前一致も同時に見る。

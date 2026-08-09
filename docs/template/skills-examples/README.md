@@ -26,4 +26,4 @@ cp -r docs/template/skills-examples/order-cancellation .claude/skills/
 
 ## この例自体の扱い
 
-`docs/template/` はテンプレート自身の記録なので、導入後に削除する（`docs/checklist.md` の項目 2）。例が不要になったらディレクトリごと消えてよい。
+`docs/template/` はテンプレート自身の記録なので、導入後に削除する（`python3 scripts/setup.py` が消す）。例が不要になったらディレクトリごと消えてよい。

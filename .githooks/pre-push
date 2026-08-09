@@ -1,0 +1,85 @@
+#!/bin/sh
+# AGENTS.md の「エージェントへの制約」のうち、機械で防げる 2 つを実際に防ぐ。
+#
+#   - バージョン管理の履歴を書き換えない
+#   - 既定ブランチには変更提案経由で入れる（直接 push しない）
+#
+# 人間にもエージェントにも同じように効く。git を通る操作はすべてここを通るため、
+# Claude Code / Copilot / 手打ちの区別なく止まる。
+#
+# 有効にする:  git config core.hooksPath .githooks
+# 一時的に外す: git push --no-verify   （理由を変更提案に書くこと）
+
+remote="$1"
+z40=0000000000000000000000000000000000000000
+
+# 守るブランチを決める。
+#   1. git config hooks.protectedBranches があればそれを使う（空白区切り）
+#   2. 無ければリモートの HEAD が指すブランチ
+#   3. それも取れなければ、リモートに実在する main / master
+protected=$(git config --get hooks.protectedBranches 2>/dev/null)
+if [ -z "$protected" ]; then
+  protected=$(git symbolic-ref --quiet --short "refs/remotes/$remote/HEAD" 2>/dev/null | sed "s|^$remote/||")
+fi
+if [ -z "$protected" ]; then
+  for b in main master; do
+    if git show-ref --verify --quiet "refs/remotes/$remote/$b"; then
+      protected="$b"
+      break
+    fi
+  done
+fi
+[ -n "$protected" ] || protected="main master"
+
+is_protected() {
+  for b in $protected; do
+    [ "$1" = "$b" ] && return 0
+  done
+  return 1
+}
+
+fail=0
+
+note() {
+  printf '\n  %s\n' "$1" >&2
+}
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  short_remote=$(printf '%s' "$remote_ref" | sed 's|^refs/heads/||')
+
+  # --- 既定ブランチへの直接 push ---
+  if is_protected "$short_remote"; then
+    note "保護されたブランチ ($short_remote) に直接 push しようとしている。"
+    note "  変更提案（pull request）経由で入れること。"
+    fail=1
+    continue
+  fi
+
+  # --- ブランチの削除 ---
+  if [ "$local_sha" = "$z40" ]; then
+    note "リモートのブランチ $short_remote を削除しようとしている。"
+    note "  マージ済みならホスティング側の画面から消すこと。"
+    fail=1
+    continue
+  fi
+
+  # --- 履歴の書き換え（非早送り） ---
+  if [ "$remote_sha" != "$z40" ]; then
+    if ! git merge-base --is-ancestor "$remote_sha" "$local_sha" 2>/dev/null; then
+      note "$short_remote の履歴を書き換えようとしている（非早送り）。"
+      note "  push 済みのコミットの amend / rebase / force push は行わない。"
+      note "  やり直したいときは、打ち消すコミットを足すこと。"
+      fail=1
+      continue
+    fi
+  fi
+done
+
+if [ "$fail" -ne 0 ]; then
+  note "push を中止した。詳細は AGENTS.md の「エージェントへの制約」。"
+  note "どうしても必要なら理由を添えて人間に確認すること。"
+  printf '\n' >&2
+  exit 1
+fi
+
+exit 0

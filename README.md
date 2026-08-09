@@ -14,7 +14,7 @@
 
 | パス | 内容 |
 | --- | --- |
-| `AGENTS.md` | エージェント向け指示の実体。言語ルール、リポジトリ構成、制約、コミット規約 |
+| `AGENTS.md` | エージェント向け指示の実体。言語、書いたものの置き場所、守る範囲、コミット規約 |
 | `CLAUDE.md` | `AGENTS.md` を取り込む 1 行。Claude Code は `AGENTS.md` を読まないため |
 | `CONTEXT.md` | ドメイン用語集の雛形 |
 | `docs/adr/` | 設計決定の置き場所。空で始まる |
@@ -23,9 +23,14 @@
 | `docs/skills-authoring.md` | プロジェクト固有の skill を自分で書く手順 |
 | `docs/skills-catalog.md` | 上流 skill の一覧（生成物） |
 | `docs/adopt-existing.md` | 既存プロジェクトへの導入手順 |
-| `docs/checklist.md` | 導入後の確認項目 |
-| `docs/onboarding.md` | プロジェクトに参加した人向けのガイド（雛形） |
+| `docs/onboarding.md` | 参加した人が読む 1 ページ（雛形）。**これだけで作業を始められる** |
+| `docs/workflow.md` | 全体の流れ・役割・図。必要になったときだけ引く |
+| `docs/checklist.md` | 導入後の確認項目（機械化できないものだけ） |
+| `scripts/setup.py` | テンプレートを自分のプロジェクトのものにする |
+| `scripts/start.py` | 参加した人が作業できる状態にする |
+| `scripts/verify.py` | 設定の抜けを機械的に確認する |
 | `scripts/gen-skills-catalog.py` | カタログの生成 |
+| `.githooks/pre-push` | 既定ブランチへの直接 push と履歴の書き換えを実際に止める |
 
 ### GitHub 層（任意）
 
@@ -36,7 +41,6 @@ GitHub を使わないなら `docs/github/` ごと削除し、`.github/` の中�
 | `docs/github/issue-tracker.md` | GitHub Issues の操作 |
 | `docs/github/triage-labels.md` | ラベルの作成 |
 | `docs/github/branch-protection.md` | ブランチ保護の設定 |
-| `docs/github/checklist.md` | セットアップ確認項目 |
 | `.github/workflows/security.yml` | gitleaks と SkillSpector による検査 |
 | `.github/scripts/check-skillspector.py` | SkillSpector の判定 |
 
@@ -46,17 +50,40 @@ GitHub を使わないなら `docs/github/` ごと削除し、`.github/` の中�
 
 ## 使い方（新規リポジトリ）
 
-1. **Use this template** から新しいリポジトリを作る
-2. **この README のうち、テンプレートの説明部分を差し替える。** 冒頭の説明と「構成」節は自分のプロジェクトの内容にする。**「CI の検査」「analyzer の劣化で落ちたとき」「ツールのバージョン更新」の 3 節は残す** — CI が落ちたときの唯一の対処手順がここにある
-3. `docs/template/` を削除する。あわせて `docs/checklist.md` の項目 2 に従い、それを指す記述が残っていないか確認する
-4. skill を導入する（`docs/skills.md`）。**`/setup-matt-pocock-skills` は実行しないこと** — このテンプレートの設定を上書きしてしまう
-5. `AGENTS.md` をプロジェクトに合わせて調整する。とくに「リポジトリ構成」表から、削除したものの行を消す
-6. GitHub を使うなら `docs/github/` の手順を上から実行する（ラベル作成 → CI をマージ → **緑を確認** → ブランチ保護）
-7. `docs/checklist.md` で抜けが無いか確認する。GitHub を使うなら `docs/github/checklist.md` も
-8. `docs/onboarding.md` の雛形部分（プロジェクトの説明、環境の立ち上げ方、相談先）を埋める。参加者が最初に読むファイルになる
-9. 用語が固まったら `CONTEXT.md`、設計を決めたら `docs/adr/` に追記する。先回りして空のファイルを埋めない
+**Use this template** から新しいリポジトリを作り、次の 3 つを実行する。
+
+```
+python3 scripts/setup.py      # テンプレートを自分のプロジェクトのものにする
+                              # → docs/onboarding.md の空欄 3 つを埋める
+python3 scripts/verify.py     # 抜けが無いか機械的に確認する
+```
+
+`setup.py` が行うこと（`--dry-run` で事前に確認できる）。
+
+- `docs/template/` の削除
+- `README.md` と `CONTEXT.md` を自分のプロジェクトのものに置き換え
+- テンプレート由来の ADR の削除
+- `AGENTS.md` の構成表から、消したものの行を落とす
+- GitHub を使わない場合は `docs/github/` と `.github/` の該当ファイルを削除（`--no-github`）
+
+**残りは人間にしかできない。**
+
+1. `docs/onboarding.md` の空欄 3 つ（プロジェクトの説明、環境の立ち上げ方、相談先）を埋める。参加者が最初に読むファイルになる
+2. skill を導入する（`docs/skills.md`）。**`/setup-matt-pocock-skills` は実行しないこと** — このテンプレートの設定を上書きしてしまう
+3. GitHub を使うなら `docs/github/` の手順を上から実行する（ラベル作成 → CI をマージ → **緑を確認** → ブランチ保護）
+4. この README の説明部分を自分のプロジェクトの内容にする。**「CI の検査」「analyzer の劣化で落ちたとき」「ツールのバージョン更新」の 3 節は残す** — CI が落ちたときの唯一の対処手順がここにある
+
+用語が固まったら `CONTEXT.md`、設計を決めたら `docs/adr/` に追記する。**先回りして空のファイルを埋めない。**
 
 既存のリポジトリに入れる場合は `docs/adopt-existing.md` を参照。
+
+## 参加する人がやること
+
+```
+python3 scripts/start.py
+```
+
+skill の導入状況と git hook を確認して、足りなければ何をすればよいかを表示する。読むのは `docs/onboarding.md` の 1 ページだけでよい。
 
 ## CI の検査（GitHub 層）
 
@@ -94,13 +121,33 @@ skillspector scan docs/ --no-llm --format markdown -o "$RUNNER_TEMP/skillspector
 | skills CLI | `docs/skills.md` の導入コマンドと更新コマンド |
 | skill カタログ | `python3 scripts/gen-skills-catalog.py` |
 
+## 効果の測定
+
+このテンプレートに効果があるかを、1 度だけ測ってある。**結果は控えめで、都合の悪い数字も含む。**
+
+同じドメイン（受注管理）に同じタスクを与え、構成だけを変えて 4 回ずつ実行した。タスクは意図的に ADR と矛盾させてある（「取り消し済みの注文を一覧から外して」に対し、ADR は「取り消しは削除ではない。集計に残す」と決めている）。成果物は 3 人の採点者が実際にコードを走らせて評価した。
+
+| 構成 | 平均品質（10 点） | 既存 API の意味を保った |
+| --- | --- | --- |
+| `AGENTS.md` + `CONTEXT.md` + `docs/adr/` + skill | 9.0 | 4/4 |
+| `AGENTS.md` のみ | 8.3 | 1/4 |
+| 設定なし | 8.2 | 1/4 |
+
+読み取れること。
+
+- **どの構成でも会計集計は壊れなかった。** 仕掛けた罠は全 12 回とも回避された。エージェントは想定より賢い
+- **ドメイン文書（`CONTEXT.md` と `docs/adr/`）がある構成だけが、既存メソッドの意味を変えずに表示層を足した。** ADR が定めた「データ層からは消さない」に 4/4 で従った
+- **`AGENTS.md` だけを置いた構成は、何も置かない構成と区別できなかった。** 規約や進め方の記述は、実装の質を動かさなかった
+
+**限界。** n=4、タスク 1 種、ドメイン 1 つ。品質差 0.8 点は統計的に主張できる大きさではない。この結果を「初心者が経験者並みの成果を出せる」と読まないこと。言えるのは「**ドメインを書き残す場所を持つことに効果がありそうで、進め方を文書化することには効果が見られなかった**」までである。
+
 ## 意図的に入れていないもの
 
 | 対象 | 理由 |
 | --- | --- |
 | `.github/instructions/*.instructions.md` | `applyTo` で紐づける対象のコードがテンプレートに存在しない |
 | `.github/workflows/copilot-setup-steps.yml` | インストールする依存が存在しない |
-| `.claude/settings.json` | 制約は規約として書く方針にした |
+| `.claude/settings.json` | Claude Code 専用。同じ制約を `.githooks/pre-push` で agent 非依存に効かせている |
 | SARIF の Security タブ連携 | private リポジトリで有料ライセンスが必要になる |
 | 定期実行（cron） | ツールのバージョンを固定しているため、同じ履歴を同じルールで再検査するだけになる |
 | インストーラ | 導入は手順書で行う方針にした |
@@ -110,7 +157,8 @@ skillspector scan docs/ --no-llm --format markdown -o "$RUNNER_TEMP/skillspector
 採用する前に知っておくべきこと。
 
 - **複写後に更新が届かない。** テンプレート側を改善しても、既に複写されたリポジトリには反映されない。反映は各リポジトリで手作業になる
-- **セットアップの抜けを自動検出できない。** 確認はチェックリストによる目視のみ。とくにブランチ保護の設定漏れは無言で通り、CI が赤くてもマージできる状態が続く
+- **参加者ガイドの中身は検査できない。** `scripts/verify.py` は空欄が埋まっているかは見るが、書いてある手順が実際に通るかは分からない。知らない人に読ませて確かめるしかない
+- **jj（jujutsu）利用者に git hook が効かない。** `jj git push` は git hook を実行しないため、既定ブランチへの直接 push と履歴の書き換えを止められない（実測で確認）
 - **skill の中身が固定できていない。** 導入コマンドで固定できるのはインストーラ CLI までで、skill 本体は取得時点の上流が入る（`docs/skills.md` を参照）
 - **SkillSpector の依存ツリーが固定されていない。** SkillSpector 本体はコミット SHA で固定しているが、`pip install` が引く 100 個近い依存は毎回解決される。上流の lockfile を使えば塞げるが、CI に別のパッケージマネージャを持ち込むことになるため見送っている
 - **日本語で書かれている。** 想定利用者が日本語話者のチームであることを前提にしている

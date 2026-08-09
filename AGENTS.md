@@ -1,48 +1,39 @@
 # エージェント向け指示
 
-**読み手**: エージェント。起動時に自動で読み込まれる。人間が全体像を掴むには `docs/onboarding.md` から。
-
-コーディングエージェント（GitHub Copilot、Claude Code など）にこのリポジトリの前提を伝えるファイル。エージェントは起動時にこれを自動で読み込む。
+**読み手**: エージェント。起動時に自動で読み込まれる。人間向けの案内は `docs/onboarding.md`。
 
 ## 言語
 
-- ドキュメント、コミットメッセージ、コード内コメントはすべて**日本語**で書く
-- 例外として、機械が照合する文字列は英語のまま維持する。ラベル名（`needs-triage` など）、`Status:` のような見出し語、識別子が該当する
+ドキュメント、コミットメッセージ、コード内コメントは**日本語**で書く。機械が照合する文字列は英語のまま維持する（ラベル名、`Status:` のような見出し語、識別子）。
 
-## リポジトリ構成
+## 探索の前に読む
 
-| パス | 役割 |
+`CONTEXT.md`（このプロジェクトの用語）と、触る領域に関わる `docs/adr/`（決定とその理由）。存在しない、または空なら黙って先に進む。
+
+`docs/template/` が存在する場合、そこはこのリポジトリの土台になったテンプレート自身の記録であり、このプロジェクトのドメインではない。用語や決定を探すときに参照しない。
+
+## 書いたものの置き場所
+
+| 書くもの | 置き場所 |
 | --- | --- |
-| `AGENTS.md` | エージェント向け指示。このファイル |
-| `CLAUDE.md` | `AGENTS.md` を取り込むだけ。Claude Code は `AGENTS.md` を読まないため |
-| `CONTEXT.md` | このプロジェクトのドメイン用語集 |
-| `docs/adr/` | このプロジェクトの設計決定とその理由 |
-| `docs/agents/` | issue tracker とドメイン文書の運用規約（ホスティング非依存） |
-| `docs/skills.md` | skill の導入手順と、設定がどう読まれるか |
-| `docs/skills-authoring.md` | このプロジェクト固有の skill を自分で書くときの手順 |
-| `docs/skills-catalog.md` | skill の一覧。**生成物なので手で編集しない**（無いこともある） |
-| `.claude/skills/` | このプロジェクト固有の skill。Claude Code と Copilot の両方が読む（無いこともある） |
-| `docs/checklist.md` | 導入後の確認項目 |
-| `docs/onboarding.md` | このプロジェクトに参加した人が最初に読むガイド |
-| `scripts/` | カタログ生成などの補助スクリプト（無いこともある） |
-| `docs/github/` | GitHub を使う場合の手順。使わないなら削除してよい（無いこともある） |
-| `.github/` | CI とその判定スクリプト。GitHub を使う場合のみ（無いこともある） |
-| `docs/template/` | このリポジトリの土台になったテンプレート自体の記録（無いこともある） |
+| 語の定義（それが何であるか） | `CONTEXT.md` |
+| 決定とその理由（なぜそうしたか） | `docs/adr/` |
+| 場面ごとの手順・レビュー観点 | `.claude/skills/` |
+| まだ確定していない調査・設計 | `.scratch/`（バージョン管理外） |
+| 確定した実装タスク | `docs/agents/issue-tracker.md` の振り分けに従う |
 
-探索を始める前に `CONTEXT.md` と、触る領域に関わる `docs/adr/` を読む。存在しない、または中身が空の場合は黙って先に進む。詳細は `docs/agents/domain.md` を参照。
+**用語と決定は 1 か所にだけ置く。** skill からは参照し、書き写さない。skill を書く前に `docs/skills-authoring.md`、skill を導入・再設定する前に `docs/skills.md` を読む。
 
-**`docs/template/` が存在する場合、そこはテンプレート自身についての記録であり、このプロジェクトのドメインではない。** 用語や設計決定を探すときに参照しないこと。複写先では削除されていることがある。
+## 守る範囲
 
-設定を壊す操作を避けるため、skill を導入・再設定する前に `docs/skills.md` を読むこと。skill を新しく書く前には `docs/skills-authoring.md` を読むこと。用語の定義は `CONTEXT.md`、決定は `docs/adr/` にあり、skill に書き写すと正典が二重になる。
+- **既定ブランチには変更提案（pull request / merge request）経由で入れる。** 機能ブランチへの push は自由に行ってよい
+- **履歴は前に進める。** やり直したいときは、打ち消すコミットを足す
+- **失敗はそのまま報告する。** テスト・型チェック・lint が落ちたら、落ちた事実を伝える。通すための無効化や条件緩和は行わない
+- **認証情報は値を伏せて扱う。** API キー、トークン、`.env` の中身を出力・送信しない
 
-## エージェントへの制約
+上 2 つは `.githooks/pre-push` が実際に止める（有効化は `python3 scripts/start.py`）。**jj は git hook を実行しないため、jj を使う場合は自分で守ること。**
 
-以下は強制ではなく規約。守れない状況になったら作業を止めて人間に確認する。
-
-- **バージョン管理の履歴を書き換えない** — force push、`git reset --hard`、`git clean -fdx`、push 済みコミットの rebase や amend
-- **既定ブランチには変更提案（pull request / merge request）経由で入れる** — 直接 push しない
-- **テスト・型チェック・lint を通すために無効化や条件緩和をしない** — 失敗はそのまま報告する
-- **認証情報を出力・送信しない** — API キー、トークン、`.env` の中身を含む
+これらを守れない状況になったら、作業を止めて人間に確認する。
 
 ## コミットメッセージ
 
@@ -68,14 +59,6 @@ fix: カタログ生成が未知のカテゴリで停止しない問題を修正
 
 ## Agent skills
 
-### Issue tracker
-
-二層構成。探索（調査・設計）は `.scratch/`（バージョン管理外）、確定した実装タスクはプロジェクトのタスク管理に置く。skill ごとの振り分けは `docs/agents/issue-tracker.md` を参照。
-
-### Triage labels
-
-5 つの標準ロール（`needs-triage` / `needs-info` / `ready-for-agent` / `ready-for-human` / `wontfix`）を使う。詳細は `docs/agents/triage-labels.md` を参照。
-
-### Domain docs
-
-single-context 構成。ルートの `CONTEXT.md` と `docs/adr/` を使う。詳細は `docs/agents/domain.md` を参照。
+- **Issue tracker** — 二層構成。探索は `.scratch/`、確定した実装タスクはタスク管理。skill ごとの振り分けは `docs/agents/issue-tracker.md`
+- **Triage labels** — `needs-triage` / `needs-info` / `ready-for-agent` / `ready-for-human` / `wontfix`。詳細は `docs/agents/triage-labels.md`
+- **Domain docs** — single-context 構成。`CONTEXT.md` と `docs/adr/`。詳細は `docs/agents/domain.md`
