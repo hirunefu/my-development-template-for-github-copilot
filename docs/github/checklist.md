@@ -1,5 +1,7 @@
 # GitHub 層のセットアップ確認
 
+**読み手**: GitHub 層を導入した人。`docs/checklist.md` と併せて通す。
+
 GitHub を使う場合に、`docs/checklist.md`（ホスティング非依存の確認）に加えて通す項目。
 
 ## 1. workflow が動いているか
