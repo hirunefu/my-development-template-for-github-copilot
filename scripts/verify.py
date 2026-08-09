@@ -52,6 +52,18 @@ class Result:
     fix: str = ""
 
 
+def read(p: Path) -> str:
+    """UTF-8 でないファイルがあっても検査を止めない。
+
+    日本語のチームでは Shift_JIS の既存資料が docs/ に混ざることがある。
+    1 ファイルのために全検査が落ちるほうが害が大きい。
+    """
+    try:
+        return p.read_text(encoding="utf-8")
+    except (UnicodeDecodeError, OSError):
+        return ""
+
+
 def md_files() -> list[Path]:
     out = []
     for p in ROOT.rglob("*.md"):
@@ -84,7 +96,7 @@ def check_template_prose() -> Result:
             continue
         if p.relative_to(ROOT).parts[0] == "docs" and "template" in p.parts:
             continue
-        text = p.read_text(encoding="utf-8")
+        text = read(p)
         if any(n in text for n in needles):
             hits.append(str(p.relative_to(ROOT)))
     if hits:
@@ -237,7 +249,7 @@ def check_links() -> Result:
     bad = []
     for p in md_files():
         base = p.parent
-        for m in re.finditer(r"\[[^\]]*\]\(([^)#]+)\)", p.read_text(encoding="utf-8")):
+        for m in re.finditer(r"\[[^\]]*\]\(([^)#]+)\)", read(p)):
             t = m.group(1)
             if t.startswith(("http://", "https://", "mailto:")):
                 continue

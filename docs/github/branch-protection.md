@@ -13,7 +13,7 @@ gh api -X PUT repos/{owner}/{repo}/branches/main/protection --input - <<'EOF'
 {
   "required_status_checks": {
     "strict": true,
-    "contexts": ["gitleaks", "skillspector"]
+    "contexts": ["verify", "gitleaks", "skillspector"]
   },
   "enforce_admins": false,
   "required_pull_request_reviews": null,

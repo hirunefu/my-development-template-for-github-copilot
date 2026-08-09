@@ -28,14 +28,33 @@ README_TEMPLATE = """# {name}
 
 はじめての人は [docs/onboarding.md](docs/onboarding.md) を読むこと。
 
+```
+python3 scripts/start.py
+```
+
 ## 開発環境
 
 （依存のインストール、テストの実行方法、ローカルでの起動方法を書く。）
-
+{carried}
 ## ライセンス
 
 （このプロジェクトのライセンスを書く。）
 """
+
+# 複写先でも残す節。CI が落ちたときの唯一の対処手順がここにあるため、
+# README を置き換えるときに引き継ぐ。
+CARRY_SECTIONS = ["## CI の検査（GitHub 層）", "## ツールのバージョン更新"]
+
+
+def carry_over(text: str, titles: list[str]) -> str:
+    """既存 README から、複写先でも必要な節を切り出す。"""
+    lines = text.split("\n")
+    heads = [i for i, l in enumerate(lines) if l.startswith("## ")]
+    out = []
+    for a, b in zip(heads, heads[1:] + [len(lines)]):
+        if lines[a].strip() in titles:
+            out.append("\n".join(lines[a:b]).rstrip())
+    return ("\n" + "\n\n".join(out) + "\n\n") if out else "\n"
 
 CONTEXT_TEMPLATE = """# {name}
 
@@ -112,7 +131,19 @@ def main() -> int:
     ap.add_argument("--keep-template-docs", action="store_true",
                     help="docs/template/ を残す（既定は削除）")
     ap.add_argument("--dry-run", action="store_true", help="実行せず、何をするかだけ表示する")
+    ap.add_argument("--force", action="store_true",
+                    help="導入済みでも実行する。README.md と CONTEXT.md の中身は失われる")
     args = ap.parse_args()
+
+    # 2 回目の実行は既定で拒否する。README.md と CONTEXT.md を雛形で
+    # 上書きするため、人間が書いた内容が黙って消える。
+    if not (ROOT / ".template-repo").exists() and not args.force and not args.dry_run:
+        print("このリポジトリは既に導入済み（.template-repo が無い）。", file=sys.stderr)
+        print("", file=sys.stderr)
+        print("もう一度実行すると README.md と CONTEXT.md を雛形で上書きし、", file=sys.stderr)
+        print("書いた内容が失われる。何が起きるかは --dry-run で確認できる。", file=sys.stderr)
+        print("それでも実行するなら --force を付けること。", file=sys.stderr)
+        return 2
 
     interactive = sys.stdin.isatty() and not (args.name and args.desc)
     name = args.name or (ask("プロジェクト名") if interactive else "")
@@ -137,7 +168,12 @@ def main() -> int:
         p.rm("docs/template")
 
     # 2. README を自分のものにする
-    p.write("README.md", README_TEMPLATE.format(name=name, desc=desc or "（何をするプロジェクトかを書く。）"))
+    old_readme = (ROOT / "README.md").read_text(encoding="utf-8") if (ROOT / "README.md").exists() else ""
+    carried = carry_over(old_readme, CARRY_SECTIONS) if use_github else "\n"
+    if carried.strip():
+        p.done.append(f"README.md に {len(CARRY_SECTIONS)} 節を引き継ぐ（CI が落ちたときの対処手順）")
+    p.write("README.md", README_TEMPLATE.format(
+        name=name, desc=desc or "（何をするプロジェクトかを書く。）", carried=carried))
 
     # 3. 用語集を自分のものにする（空の雛形。先回りして埋めない）
     p.write("CONTEXT.md", CONTEXT_TEMPLATE.format(name=name, desc=desc or "（このプロジェクトが何であり、なぜ存在するのかを 1〜2 文で書く。）"))

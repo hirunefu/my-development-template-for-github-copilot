@@ -21,6 +21,13 @@ protected=$(git config --get hooks.protectedBranches 2>/dev/null)
 if [ -z "$protected" ]; then
   protected=$(git symbolic-ref --quiet --short "refs/remotes/$remote/HEAD" 2>/dev/null | sed "s|^$remote/||")
 fi
+# ローカルに HEAD が無い場合はリモートに直接尋ねる。
+# 既定ブランチが develop / trunk のように main でも master でもないとき、
+# ここを飛ばすと保護が外れる。
+if [ -z "$protected" ]; then
+  protected=$(git ls-remote --symref "$remote" HEAD 2>/dev/null \
+              | awk '/^ref:/ { sub("refs/heads/", "", $2); print $2; exit }')
+fi
 if [ -z "$protected" ]; then
   for b in main master; do
     if git show-ref --verify --quiet "refs/remotes/$remote/$b"; then
@@ -29,7 +36,17 @@ if [ -z "$protected" ]; then
     fi
   done
 fi
-[ -n "$protected" ] || protected="main master"
+# 決まらなければ main / master を仮定し、そのことを伝える。
+# ここで全部止めると hook が使えなくなる。既定ブランチが develop などの
+# 場合は、この警告を見た人が hooks.protectedBranches を設定する。
+#
+# **この hook は手元での速い気づきであって、最終的な強制ではない。**
+# 確実に止めるのはホスティング側のブランチ保護（docs/github/branch-protection.md）。
+if [ -z "$protected" ]; then
+  protected="main master"
+  printf '\n  既定ブランチを特定できなかったので main / master を保護対象とみなす。\n' >&2
+  printf '  違う名前なら: git config hooks.protectedBranches "<名前>"\n' >&2
+fi
 
 is_protected() {
   for b in $protected; do

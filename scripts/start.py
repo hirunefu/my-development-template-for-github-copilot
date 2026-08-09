@@ -62,6 +62,10 @@ def ensure_hooks(rep: Report, check_only: bool) -> None:
     if not hooks_dir.exists():
         rep.add(INFO, "git hook", ".githooks/ が無いので設定しない")
         return
+    inside, _ = run(["git", "rev-parse", "--git-dir"])
+    if inside != 0:
+        rep.add(INFO, "git hook", "git リポジトリではないので設定しない")
+        return
     code, out = run(["git", "config", "--get", "core.hooksPath"])
     current = out.strip()
     if current == ".githooks":
@@ -159,6 +163,8 @@ def check_instructions(rep: Report) -> None:
         rep.add(OK, "エージェント設定", "AGENTS.md（起動時に自動で読まれる）")
     else:
         rep.add(NG, "エージェント設定", "AGENTS.md が無い")
+        rep.need("**AGENTS.md が無い。** エージェントはこのプロジェクトの前提を何も知らない状態で動く。"
+                 "メンテナに確認すること")
 
 
 def where_work_goes() -> str:

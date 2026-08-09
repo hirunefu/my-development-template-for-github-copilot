@@ -13,8 +13,11 @@
 ## 使い方
 
 ```
+mkdir -p .claude/skills
 cp -r docs/template/skills-examples/order-cancellation .claude/skills/
 ```
+
+`.claude/skills/` はテンプレートには無い（自分で作る）。
 
 コピーしたら**中身を全部書き換える。** 注文も課金も API もこのテンプレートの想定であって、あなたのドメインではない。例のままの語彙が残った skill を置くと、エージェントが他プロジェクトの用語を正典として扱う。
 
