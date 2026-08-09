@@ -24,4 +24,4 @@ skill がロール名に言及したとき（例:「AFK-ready の triage ラベ�
 
 triage の対象はタスク管理側だけ。探索領域（`.scratch/`）のファイルは対象外（`issue-tracker.md` を参照）。
 
-ラベルを実際に作成・付与する手順は、使用するトラッカーごとのファイルに書く。GitHub の場合は `docs/github/triage-labels.md`。
+ラベルを実際に作成・付与する手順は、使用するトラッカーごとのファイルに書く。GitHub を使う場合は `docs/github/triage-labels.md`（GitHub 層を入れていなければ無い）。

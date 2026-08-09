@@ -17,9 +17,9 @@
 | `docs/adr/` | このプロジェクトの設計決定とその理由 |
 | `docs/agents/` | issue tracker とドメイン文書の運用規約（ホスティング非依存） |
 | `docs/skills.md` | skill の導入手順と、設定がどう読まれるか |
-| `docs/skills-catalog.md` | skill の一覧。**生成物なので手で編集しない** |
+| `docs/skills-catalog.md` | skill の一覧。**生成物なので手で編集しない**（無いこともある） |
 | `docs/checklist.md` | 導入後の確認項目 |
-| `scripts/` | カタログ生成などの補助スクリプト |
+| `scripts/` | カタログ生成などの補助スクリプト（無いこともある） |
 | `docs/github/` | GitHub を使う場合の手順。使わないなら削除してよい（無いこともある） |
 | `.github/` | CI とその判定スクリプト。GitHub を使う場合のみ（無いこともある） |
 | `docs/template/` | このリポジトリの土台になったテンプレート自体の記録（無いこともある） |
