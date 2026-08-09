@@ -12,15 +12,25 @@
 | --- | --- |
 | エージェント向け指示 | `AGENTS.md`、`CLAUDE.md` |
 | ドメイン文書の置き場所 | `CONTEXT.md`（雛形）、`docs/adr/README.md` |
-| 運用規約の汎用部分 | `docs/agents/`、`NOTICE` |
+| 運用規約の汎用部分 | `docs/agents/`、`docs/skills.md`、`NOTICE` |
 
-残りは任意。CI（`.github/`）と GitHub 層（`docs/github/`）と skill の導入手順（`docs/skills.md`）は、必要になった時点で足す。
+残りは任意。CI（`.github/`）と GitHub 層（`docs/github/`）は、必要になった時点で足す。
+
+`docs/skills.md` をコアに含めるのは、`docs/agents/` が skill 名を前提にしているため。skill を使わない場合でも、**なぜその振り分け表があるのかを説明する文書が無いと `docs/agents/` が意味不明になる**。
 
 ## 手順
 
 ### 1. コアを置く
 
-次をコピーする。
+**先に、同名のファイルが既にあるかを確認する。**
+
+```
+ls AGENTS.md CLAUDE.md CONTEXT.md NOTICE .github/copilot-instructions.md 2>/dev/null
+```
+
+**存在するものは上書きしないこと。** 別名（`AGENTS.md.new` など）で置くか、いったん退避してから手順 2 で統合する。ここで上書きすると、統合すべき既存の内容が消える。
+
+そのうえで次をコピーする。
 
 ```
 AGENTS.md
@@ -30,6 +40,7 @@ NOTICE
 docs/agents/
 docs/adr/README.md
 docs/checklist.md
+docs/skills.md
 ```
 
 `NOTICE` を含めるのは、`docs/agents/` が MIT の上流テンプレートからの派生物だから。**残す限り帰属表示も一緒に持ち込む必要がある。** 導入先に既に `NOTICE` がある場合は、その節を追記する形にする。
