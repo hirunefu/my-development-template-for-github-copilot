@@ -31,6 +31,7 @@
 | `scripts/verify.py` | 設定の抜けを機械的に確認する |
 | `scripts/gen-skills-catalog.py` | カタログの生成 |
 | `.githooks/pre-push` | 既定ブランチへの直接 push と履歴の書き換えを実際に止める |
+| `.template-repo` | テンプレート本体の目印。`setup.py` が消す（複写先には残さない） |
 
 ### GitHub 層（任意）
 
@@ -89,10 +90,15 @@ skill の導入状況と git hook を確認して、足りなければ何をす�
 
 | job | 何を見るか | 落ちる条件 |
 | --- | --- | --- |
+| `verify` | 設定の抜け（`scripts/verify.py` と同じもの） | 雛形が埋まっていない、リンクが切れている、指示ファイルが壊れている など |
 | `gitleaks` | 履歴全体への秘密の混入 | 秘密を検出した |
 | `skillspector` | エージェントが読む資産の prompt injection やデータ持ち出しの兆候 | 判定が `DO_NOT_INSTALL`、または analyzer が 1 件でも劣化した |
 
-どちらも API キーを必要としない。SkillSpector は `--no-llm` で静的解析のみを行う。結果は Job Summary に出る。
+**同じ検査をローカルと CI の両方で走らせている。** ローカルで `python3 scripts/verify.py` を実行すれば、`gh` の認証がある分だけラベル・ブランチ保護・required check の名前一致まで見る。CI 側は認証しないのでその 4 項目はスキップされる。
+
+**required status check に追加するのは、その job が実際に緑になってから。** 順序を逆にすると、報告されない check を待って変更提案が永久にマージできなくなる。`scripts/verify.py` はこの不一致を検出する。
+
+いずれも API キーを必要としない。SkillSpector は `--no-llm` で静的解析のみを行う。結果は Job Summary に出る。
 
 GitHub の Security タブ（SARIF）は使っていない。private リポジトリでは Code Security ライセンスが必要になり、配布物として成立しないため。
 

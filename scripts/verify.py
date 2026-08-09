@@ -26,6 +26,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
+# このリポジトリがテンプレート本体か。setup.py が消す。
+# 本体では「雛形のまま」が正しい状態なので、いくつかの検査は判定が反転する。
+IS_TEMPLATE = (ROOT / ".template-repo").exists()
+
 PASS, FAIL, SKIP, WARN = "pass", "fail", "skip", "warn"
 
 MARK = {PASS: "✓", FAIL: "✗", SKIP: "−", WARN: "!"}
@@ -70,7 +74,9 @@ def run(cmd: list[str], timeout: int = 20) -> tuple[int, str]:
 
 
 def check_template_prose() -> Result:
-    """1. テンプレート自身の説明が残っていないか。"""
+    """テンプレート自身の説明が残っていないか。"""
+    if IS_TEMPLATE:
+        return Result("テンプレートの説明が残っていない", SKIP, "テンプレート本体なので残っていてよい")
     needles = ["エージェント向け開発テンプレート", "まだ実案件で運用されていない"]
     hits = []
     for p in md_files():
@@ -93,6 +99,8 @@ def check_template_dir() -> Result:
     if not d.exists():
         return Result("テンプレート自身の記録が消えている", PASS)
     n = len(list(d.rglob("*")))
+    if IS_TEMPLATE:
+        return Result("テンプレート自身の記録が消えている", SKIP, f"テンプレート本体の記録 {n} 件")
     return Result("テンプレート自身の記録が消えている", WARN, f"docs/template/ に {n} 件残っている",
                   "自分のプロジェクトのドメインではないので削除する（残すこと自体は選択可能）")
 
@@ -122,6 +130,14 @@ def check_onboarding_filled() -> Result:
         "相談先": "相談先を書く",
     }
     left = [k for k, needle in blanks.items() if needle in text]
+
+    if IS_TEMPLATE:
+        # 本体では空欄が 3 つとも残っているのが正しい。埋まっていたら配布物が壊れている。
+        gone = [k for k in blanks if k not in left]
+        if gone:
+            return Result("参加者ガイドの雛形が壊れていない", FAIL, "空欄が消えている: " + ", ".join(gone),
+                          "複写先が何を埋めればよいか分からなくなる")
+        return Result("参加者ガイドの雛形が壊れていない", PASS, "空欄 3 つと節 5 つが揃っている")
     if left:
         return Result("参加者ガイドの空欄が埋まっている", FAIL, "未記入: " + ", ".join(left),
                       "参加者が最初に読むファイル。空欄のまま渡さない")
@@ -151,7 +167,9 @@ def check_adr_empty() -> Result:
     if not d.exists():
         return Result("ADR が自分のものだけ", FAIL, "docs/adr/ が無い", "README.md を置いて作る")
     others = sorted(x.name for x in d.iterdir() if x.name != "README.md")
-    tmpl = [n for n in others if re.match(r"^00(0[1-9]|10)-", n)]
+    if IS_TEMPLATE:
+        return Result("ADR が自分のものだけ", SKIP, f"テンプレート本体（docs/template/adr/ に記録）")
+    tmpl = [n for n in others if re.match(r"^00(0[1-9]|1[0-9])-", n)]
     if tmpl:
         return Result("ADR が自分のものだけ", WARN, "テンプレート由来の番号: " + ", ".join(tmpl),
                       "自分の決定でなければ消す。番号は 0001 から使う")

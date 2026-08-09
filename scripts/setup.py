@@ -127,7 +127,12 @@ def main() -> int:
 
     p = Plan(args.dry_run)
 
-    # 1. テンプレート自身の記録を消す
+    # 1. テンプレート本体の目印を消す。
+    #    残すと verify.py がテンプレート向けの判定のままになり、
+    #    雛形が埋まっていなくても緑になってしまう。
+    p.rm(".template-repo")
+
+    # 2. テンプレート自身の記録を消す
     if not args.keep_template_docs:
         p.rm("docs/template")
 

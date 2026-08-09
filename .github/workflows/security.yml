@@ -11,6 +11,17 @@ permissions:
 # job の id はそのまま required status check の名前になる。
 # 設定コマンドに渡しやすいよう ASCII のまま維持し、日本語の name: は付けない。
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # 設定の抜けを機械的に確認する。docs/checklist.md にあった目視確認と同じもの。
+      # gh を認証しないので GitHub 層の項目はスキップされる。ローカルで実行すれば
+      # ラベル・ブランチ保護・required check の名前一致まで見る。
+      - name: 設定の抜けを確認する
+        run: python3 scripts/verify.py
+
   gitleaks:
     runs-on: ubuntu-latest
     env:
