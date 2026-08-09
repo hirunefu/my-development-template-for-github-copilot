@@ -71,14 +71,24 @@ def parse_frontmatter(text, rel_path):
                     f"{rel_path}: {key} が次の行に続いている。"
                     "このスクリプトは 1 行の値しか解釈しない"
                 )
-            if len(raw) >= 2 and raw[0] == raw[-1] and raw[0] in "\"'":
-                raw = raw[1:-1]
+
+        # クォートの除去は全フィールド共通で行う。name と description だけに
+        # 適用していたころは、`disable-model-invocation: "true"` を黙って
+        # false と誤読していた。
+        if len(raw) >= 2 and raw[0] == raw[-1] and raw[0] in "\"'":
+            raw = raw[1:-1]
 
         fields[key] = raw
 
     for required in ("name", "description"):
         if required not in fields:
             raise UnsupportedFormat(f"{rel_path}: {required} が無い")
+
+    flag = fields.get("disable-model-invocation")
+    if flag is not None and flag.lower() not in ("true", "false"):
+        raise UnsupportedFormat(
+            f"{rel_path}: disable-model-invocation が '{flag}' で真偽値として解釈できない"
+        )
 
     return fields
 

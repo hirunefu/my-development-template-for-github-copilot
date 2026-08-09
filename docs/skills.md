@@ -8,7 +8,7 @@ skill の一覧は [skills-catalog.md](./skills-catalog.md) にある。
 
 ## 導入
 
-上流は 3 通りの導入方法を提示していて、**どれか一つを選ぶ**よう明記している。複数の方法で入れると skill が二重に登録される。
+上流は導入方法を 2 通り示していて、**どちらか一方を選ぶ**よう明記している（"Two ways in, two philosophies. ... Pick one — installing both leaves you with every skill twice."）。両方で入れると skill が二重に登録される。
 
 このテンプレートが前提にするのは次の方法。
 
@@ -46,7 +46,7 @@ npx skills@1.5.22 add mattpocock/skills -g
 
 `docs/agents/` の設定は既に入っている。加えて `issue-tracker.md` の二層構成（探索領域とタスク管理を skill 名で振り分ける）は、あの skill が提示する 4 択（GitHub / GitLab / ローカル markdown / その他）には存在しない独自設定で、実行すると標準テンプレートで上書きされて失われる。
 
-理由の詳細は [adr/0005-do-not-rerun-setup-skill.md](./template/adr/0005-do-not-rerun-setup-skill.md) を参照。
+**実行してしまった場合は git 履歴から `docs/agents/` を戻すこと。** 判断の経緯はテンプレート側の ADR-0005 に記録されているが、複写先には含まれないことがある。
 
 issue tracker やラベルの構成を変えたくなった場合は、`docs/agents/` を直接編集する。
 
@@ -54,7 +54,7 @@ issue tracker やラベルの構成を変えたくなった場合は、`docs/age
 
 | ファイル | 読まれ方 |
 | --- | --- |
-| `docs/agents/issue-tracker.md` | `/triage` と `/code-review` がパスで直接参照する。他の skill は `AGENTS.md` の `## Agent skills` ブロックから辿る |
+| `docs/agents/issue-tracker.md` | `/code-review` がパスで直接参照する。`/triage` を含む他の skill は `AGENTS.md` の `## Agent skills` ブロックから辿る |
 | `docs/agents/triage-labels.md` | `/triage` が使うラベル語彙。実際のラベル作成手順はトラッカーごとの層に置く |
 | `docs/agents/domain.md` | `CONTEXT.md` と `docs/adr/` の読み方を定める。`/domain-modeling` `/diagnosing-bugs` `/tdd` `/codebase-design` `/improve-codebase-architecture` などが対象 |
 
@@ -76,4 +76,4 @@ python3 scripts/gen-skills-catalog.py
 
 出力は決定的で、上流が動いていなければ差分は出ない。上流のディレクトリ構成や frontmatter の形式が変わった場合は、誤った内容を書き出さずにエラーで停止する。
 
-**カタログの更新を検査する CI は置いていない。** 理由は [adr/0004-skills-catalog-generated-not-enforced.md](./template/adr/0004-skills-catalog-generated-not-enforced.md) を参照。上流が変わったことに自動では気づけないため、カタログを信頼する前に冒頭のリビジョンを確認すること。
+**カタログの更新を検査する CI は置いていない。** 第三者リポジトリへのネットワークアクセスを CI に持ち込まないための判断で、代償として上流が変わったことに自動では気づけない。**カタログを信頼する前に冒頭のリビジョンを確認すること。**

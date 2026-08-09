@@ -20,6 +20,7 @@
 | `docs/skills.md` | skill の導入手順 |
 | `docs/skills-catalog.md` | 上流 skill の一覧（生成物） |
 | `docs/adopt-existing.md` | 既存プロジェクトへの導入手順 |
+| `docs/checklist.md` | 導入後の確認項目 |
 | `scripts/gen-skills-catalog.py` | カタログの生成 |
 
 ### GitHub 層（任意）
@@ -42,12 +43,12 @@ GitHub を使わないなら `docs/github/` ごと削除し、`.github/` の中�
 ## 使い方（新規リポジトリ）
 
 1. **Use this template** から新しいリポジトリを作る
-2. **この README を差し替える**。テンプレートの説明のまま残さない
-3. `docs/template/` を削除する
+2. **この README のうち、テンプレートの説明部分を差し替える。** 冒頭の説明と「構成」節は自分のプロジェクトの内容にする。**「CI の検査」「analyzer の劣化で落ちたとき」「ツールのバージョン更新」の 3 節は残す** — CI が落ちたときの唯一の対処手順がここにある
+3. `docs/template/` を削除する。あわせて `docs/checklist.md` の項目 2 に従い、それを指す記述が残っていないか確認する
 4. skill を導入する（`docs/skills.md`）。**`/setup-matt-pocock-skills` は実行しないこと** — このテンプレートの設定を上書きしてしまう
-5. `AGENTS.md` をプロジェクトに合わせて調整する
-6. GitHub を使うなら `docs/github/` の手順を上から実行する（ラベル作成 → CI をマージ → ブランチ保護）
-7. `docs/github/checklist.md` で抜けが無いか確認する
+5. `AGENTS.md` をプロジェクトに合わせて調整する。とくに「リポジトリ構成」表から、削除したものの行を消す
+6. GitHub を使うなら `docs/github/` の手順を上から実行する（ラベル作成 → CI をマージ → **緑を確認** → ブランチ保護）
+7. `docs/checklist.md` で抜けが無いか確認する。GitHub を使うなら `docs/github/checklist.md` も
 8. 用語が固まったら `CONTEXT.md`、設計を決めたら `docs/adr/` に追記する。先回りして空のファイルを埋めない
 
 既存のリポジトリに入れる場合は `docs/adopt-existing.md` を参照。
@@ -106,6 +107,7 @@ skillspector scan docs/ --no-llm --format markdown -o "$RUNNER_TEMP/skillspector
 - **複写後に更新が届かない。** テンプレート側を改善しても、既に複写されたリポジトリには反映されない。反映は各リポジトリで手作業になる
 - **セットアップの抜けを自動検出できない。** 確認はチェックリストによる目視のみ。とくにブランチ保護の設定漏れは無言で通り、CI が赤くてもマージできる状態が続く
 - **skill の中身が固定できていない。** 導入コマンドで固定できるのはインストーラ CLI までで、skill 本体は取得時点の上流が入る（`docs/skills.md` を参照）
+- **SkillSpector の依存ツリーが固定されていない。** SkillSpector 本体はコミット SHA で固定しているが、`pip install` が引く 100 個近い依存は毎回解決される。上流の lockfile を使えば塞げるが、CI に別のパッケージマネージャを持ち込むことになるため見送っている
 - **日本語で書かれている。** 想定利用者が日本語話者のチームであることを前提にしている
 
 ## ライセンス
