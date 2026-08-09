@@ -21,7 +21,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-OK, NG, INFO = "✓", "✗", "·"
+OK, NG, INFO, WARN = "✓", "✗", "·", "!"
 
 
 def width(s: str) -> int:
@@ -45,12 +45,16 @@ class Report:
     def __init__(self) -> None:
         self.lines: list[tuple[str, str, str]] = []
         self.todo: list[str] = []
+        self.notes: list[str] = []
 
     def add(self, mark: str, what: str, detail: str = "") -> None:
         self.lines.append((mark, what, detail))
 
     def need(self, instruction: str) -> None:
         self.todo.append(instruction)
+
+    def note(self, text: str) -> None:
+        self.notes.append(text)
 
 
 def ensure_hooks(rep: Report, check_only: bool) -> None:
@@ -61,7 +65,12 @@ def ensure_hooks(rep: Report, check_only: bool) -> None:
     code, out = run(["git", "config", "--get", "core.hooksPath"])
     current = out.strip()
     if current == ".githooks":
-        rep.add(OK, "git hook", "履歴の書き換えと既定ブランチへの直接 push を止める")
+        if (ROOT / ".jj").exists():
+            rep.add(WARN, "git hook", "設定済み。ただし jj からの push には効かない")
+            rep.note("`jj git push` は git hook を実行しない。jj を使う場合、"
+                     "既定ブランチへの直接 push と履歴の書き換えは自分で避けること")
+        else:
+            rep.add(OK, "git hook", "履歴の書き換えと既定ブランチへの直接 push を止める")
         return
     if check_only:
         rep.add(NG, "git hook", "未設定")
@@ -119,6 +128,32 @@ def check_agents(rep: Report) -> None:
         rep.add(INFO, "エージェント", "この端末では見つからない（エディタ内で使うなら問題ない）")
 
 
+def check_guide_usable(rep: Report) -> None:
+    """参加者ガイドが使える状態か。
+
+    検査の実体は verify.py にある。ここで書き直すと片方だけ古くなる。
+    ガイドが白紙のまま「準備できた」と言うと、参加者は準備が終わったと
+    信じたまま何も分からない状態に置かれる。
+    """
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import verify  # noqa: E402
+    except Exception:
+        rep.add(INFO, "参加者ガイド", "scripts/verify.py が読めないので確認しない")
+        return
+    r = verify.check_onboarding_filled()
+    if r.status == verify.PASS:
+        rep.add(OK, "参加者ガイド", r.detail or "使える状態")
+    elif r.status == verify.SKIP:
+        rep.add(INFO, "参加者ガイド", r.detail)
+    elif r.status == verify.WARN:
+        rep.add(OK, "参加者ガイド", r.detail)
+    else:
+        rep.add(NG, "参加者ガイド", r.detail)
+        rep.need("**このリポジトリはまだ参加者を受け入れられる状態ではない。** "
+                 "メンテナに docs/onboarding.md を埋めてもらうこと")
+
+
 def check_instructions(rep: Report) -> None:
     if (ROOT / "AGENTS.md").exists():
         rep.add(OK, "エージェント設定", "AGENTS.md（起動時に自動で読まれる）")
@@ -143,6 +178,7 @@ def main() -> int:
 
     rep = Report()
     check_instructions(rep)
+    check_guide_usable(rep)
     check_agents(rep)
     check_skills(rep)
     ensure_hooks(rep, args.check)
@@ -152,6 +188,11 @@ def main() -> int:
     w = max(width(x[1]) for x in rep.lines) + 2
     for mark, what, detail in rep.lines:
         print(f"  {mark} {pad(what, w)}{detail}")
+
+    if rep.notes:
+        print("\n注意")
+        for n in rep.notes:
+            print(f"  · {n}")
 
     if rep.todo:
         print("\nやること")

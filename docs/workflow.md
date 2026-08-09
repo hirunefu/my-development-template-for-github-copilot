@@ -33,14 +33,14 @@
 ```mermaid
 flowchart TB
     idea(["課題・要望・気づき"]) --> fixed{"やることが<br/>確定しているか"}
-    fixed -->|いいえ| scratch[".scratch/ で調べる<br/>【作業者】<br/>/grilling /research /to-spec"]
+    fixed -->|いいえ| scratch[".scratch/ で調べる<br/>【作業者】<br/>/grilling /research /to-spec※"]
     scratch --> settled{"確定したか"}
     settled -->|まだ| scratch
     settled -->|やること| task
-    fixed -->|はい| task["起票する<br/>【作業者】<br/>/to-tickets"]
-    task --> triage["受け入れを判断する<br/>【メンテナ】<br/>/triage"]
+    fixed -->|はい| task["起票する<br/>【作業者】<br/>/to-tickets※"]
+    task --> triage["受け入れを判断する<br/>【メンテナ】<br/>/triage※"]
     triage -->|情報不足| scratch
-    triage -->|着手してよい| impl["実装する<br/>【作業者】<br/>/implement /tdd"]
+    triage -->|着手してよい| impl["実装する<br/>【作業者】<br/>/implement※ /tdd"]
     impl --> check{"CI とレビュー<br/>【メンテナ】<br/>/code-review"}
     check -->|直す| impl
     check -->|通った| merged(["マージする<br/>【メンテナ】"])
@@ -57,27 +57,29 @@ triage で `needs-info` が付いたものは、情報が揃うまで実装に�
 
 ### フェーズごとに使う skill
 
-図に入りきらないものも含めた一覧。**どれを使えばよいか分からないときは `/ask-matt` が案内する。**
+図に入りきらないものも含めた一覧。**どれを使えばよいか分からないときは、自分で `/ask-matt` と入力する。**
+
+**※ が付いたものは、あなた自身が入力しないと起動しない。** エージェントに「/implement して」と頼んでも動かない（`disable-model-invocation: true` のため）。※ が無いものは、関連する作業をしていればエージェントが自分で使う。正典は `docs/skills-catalog.md`。
 
 | フェーズ | 担当 | skill | 使いどころ |
 | --- | --- | --- | --- |
-| 確定させる | 作業者 | `/grill-with-docs` | **既定。** 計画や決定を問い詰めながら、確定した用語を `CONTEXT.md` に、判断を `docs/adr/` に書いていく |
+| 確定させる | 作業者 | `/grill-with-docs`※ | **既定。** 計画や決定を問い詰めながら、確定した用語を `CONTEXT.md` に、判断を `docs/adr/` に書いていく |
 | | 作業者 | `/grilling` | 記録が要らないとき。問い詰めるだけで文書は残らない |
 | | 作業者 | `/research` | 一次情報に当たって調べ、結果を残す |
 | | 作業者 | `/prototype` | 使い捨ての実装で設計判断を確かめる |
-| | 作業者 | `/to-spec` | 会話の内容を spec にまとめる |
-| | メンテナ | `/wayfinder` | 1 セッションに収まらない規模を地図に分解する |
-| 起票 | 作業者 | `/to-tickets` | spec や計画を実装チケットに割る |
-| 受け入れ | メンテナ | `/triage` | ラベルを付けて状態を進める |
-| 実装 | 作業者 | `/implement` | spec やチケットから実装する |
+| | 作業者 | `/to-spec`※ | 会話の内容を spec にまとめる |
+| | メンテナ | `/wayfinder`※ | 1 セッションに収まらない規模を地図に分解する |
+| 起票 | 作業者 | `/to-tickets`※ | spec や計画を実装チケットに割る |
+| 受け入れ | メンテナ | `/triage`※ | ラベルを付けて状態を進める |
+| 実装 | 作業者 | `/implement`※ | spec やチケットから実装する |
 | | 作業者 | `/tdd` | テストを先に書いて進める |
 | | 作業者 | `/diagnosing-bugs` | 原因の分からない不具合や性能退行を切り分ける |
 | | 作業者 | `/resolving-merge-conflicts` | マージ衝突を解消する |
 | レビュー | メンテナ | `/code-review` | 規約と spec の 2 軸で差分を見る |
 | 残す | 両方 | `/domain-modeling` | 用語集と ADR を育てる |
 | | 両方 | `/writing-for-agents` | skill や `AGENTS.md` を書く・直す。手順を skill にするときはこれ（`docs/skills-authoring.md`） |
-| 横断 | 両方 | `/ask-matt` | どの skill を使うか分からないとき |
-| | 両方 | `/handoff` | 会話を引き継ぎ文書に圧縮する |
+| 横断 | 両方 | `/ask-matt`※ | どの skill を使うか分からないとき |
+| | 両方 | `/handoff`※ | 会話を引き継ぎ文書に圧縮する |
 
 **担当は既定であって、禁止ではない。** 作業者が `/code-review` を自分の差分に当ててから出してもよいし、メンテナが実装してもよい。分けているのは**責任の所在**であって、道具の使用権ではない。
 
@@ -89,12 +91,12 @@ triage で `needs-info` が付いたものは、情報が揃うまで実装に�
 
 ```mermaid
 flowchart LR
-    s1["/grilling<br/>/to-spec<br/>/wayfinder"] --> scratch
-    s2["/grill-with-docs<br/>/domain-modeling"] --> mem
-    s3["/to-tickets<br/>/triage"] --> task
-    s4["/implement<br/>/tdd<br/>/resolving-merge-conflicts"] --> code
+    s1["/grilling<br/>/to-spec※<br/>/wayfinder※"] --> scratch
+    s2["/grill-with-docs※<br/>/domain-modeling"] --> mem
+    s3["/to-tickets※<br/>/triage※"] --> task
+    s4["/implement※<br/>/tdd<br/>/resolving-merge-conflicts"] --> code
     s5["/code-review"] --> pr
-    s6["/research /prototype<br/>/handoff /diagnosing-bugs<br/>など"] --> ask
+    s6["/research /prototype<br/>/handoff※ /diagnosing-bugs<br/>など"] --> ask
 
     scratch[".scratch/ ── 残らない<br/>個人・管理外"]
     pr["変更提案のコメント<br/>── 残らない"]

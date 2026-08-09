@@ -180,7 +180,7 @@ def main() -> int:
     n = 1
     print(f"  {n}. docs/onboarding.md の空欄 3 つ（説明・環境の立ち上げ方・相談先）を埋める"); n += 1
     print(f"  {n}. skill を導入する（docs/skills.md）"); n += 1
-    print(f"     /setup-matt-pocock-skills は実行しないこと。この設定を上書きしてしまう"); 
+    print("     /setup-matt-pocock-skills は選ばなくてよい。実行するとこの設定を上書きしてしまう") 
     if use_github:
         print(f"  {n}. docs/github/ の手順でラベルとブランチ保護を設定する"); n += 1
     print(f"  {n}. python3 scripts/verify.py が通ることを確認する")

@@ -127,6 +127,7 @@ def check_onboarding_filled() -> Result:
     blanks = {
         "プロジェクトの説明": "何を作っているプロジェクトなのか",
         "環境の立ち上げ方": "このプロジェクトのセットアップ手順を書く",
+        "タスク管理の場所": "このプロジェクトのタスク管理を書く",
         "相談先": "相談先を書く",
     }
     left = [k for k, needle in blanks.items() if needle in text]
@@ -137,10 +138,29 @@ def check_onboarding_filled() -> Result:
         if gone:
             return Result("参加者ガイドの雛形が壊れていない", FAIL, "空欄が消えている: " + ", ".join(gone),
                           "複写先が何を埋めればよいか分からなくなる")
-        return Result("参加者ガイドの雛形が壊れていない", PASS, "空欄 3 つと節 5 つが揃っている")
+        return Result("参加者ガイドの雛形が壊れていない", PASS,
+                      f"空欄 {len(blanks)} つと節 {len(required)} つが揃っている")
     if left:
         return Result("参加者ガイドの空欄が埋まっている", FAIL, "未記入: " + ", ".join(left),
                       "参加者が最初に読むファイル。空欄のまま渡さない")
+
+    # 雛形の文言を消しただけの状態を落とす。内容の正しさは判定できないが、
+    # 分量の下限なら見られる。
+    thin = []
+    for head, floor in (("## このプロジェクト", 40), ("### 2. 開発環境", 40), ("## 詰まったら", 20)):
+        i = text.find(head)
+        if i < 0:
+            continue
+        rest = text[i + len(head):]
+        nxt = min((x for x in (rest.find("\n## "), rest.find("\n### ")) if x >= 0), default=len(rest))
+        if len(rest[:nxt].strip()) < floor:
+            thin.append(head.lstrip("# "))
+    if thin:
+        return Result("参加者ガイドの空欄が埋まっている", FAIL, "中身が薄い: " + ", ".join(thin),
+                      "雛形の文を消しただけになっている。参加者が読んで動ける内容を書く")
+    if "```" not in text[text.find("### 2. 開発環境"):][:800]:
+        return Result("参加者ガイドの空欄が埋まっている", WARN, "開発環境の節に実行できるコマンドが無い",
+                      "「click here, press enter」の粒度まで書くこと")
     if "このガイドは雛形として配布されている" in text:
         return Result("参加者ガイドの空欄が埋まっている", WARN, "雛形の案内が残っている",
                       "空欄は埋まっているので、案内の引用ブロックを消せばよい")

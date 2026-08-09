@@ -38,6 +38,6 @@ required status check にする**前に**、変更提案を 1 つ作って CI �
 copilot skill list
 ```
 
-`setup-matt-pocock-skills` を含む一覧が出ること。Claude Code なら `/` を入力して候補に出るか確認する。導入手順は `docs/skills.md`。
+Personal skills として一覧が出ること（`code-review` や `domain-modeling` など）。Claude Code なら `/` を入力して候補に出るか確認する。導入手順は `docs/skills.md`。
 
 自分で書いた skill を `.claude/skills/` に置いた場合は、同じ一覧に Project skills として並ぶ。書き方は `docs/skills-authoring.md`。

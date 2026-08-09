@@ -18,7 +18,9 @@ skill の一覧は [skills-catalog.md](./skills-catalog.md) にある。**この
 npx skills@1.5.22 add mattpocock/skills -g
 ```
 
-`-g` はグローバル導入で、`~/.agents/skills/` に実体が置かれる。対話的に skill とエージェントを選ぶ形式なので、少なくとも `setup-matt-pocock-skills` を含めて選ぶこと。
+`-g` はグローバル導入で、`~/.agents/skills/` に実体が置かれる。対話的に skill とエージェントを選ぶ形式。
+
+**`setup-matt-pocock-skills` は選ばなくてよい。** このテンプレートでは実行しない方針で（理由は下の「`/setup-matt-pocock-skills` は実行しない」節）、入れても使い道が無い。
 
 上流の README はバージョンを固定しない形を示しているが、ここでは固定している。固定しなければ、上流が侵害された場合に悪意ある更新をそのまま取り込む経路になるため。更新時は `README.md` の「ツールのバージョン更新」に従って上げる。
 
