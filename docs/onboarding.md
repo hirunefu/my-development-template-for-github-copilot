@@ -126,6 +126,26 @@ triage で `needs-info` が付いたものは、情報が揃うまで実装に�
 
 **設計を詰めるときは `/grilling` ではなく `/grill-with-docs` を既定にする。** 両者の違いは記録が残るかどうかだけで、詰めた結果を書き残さないと、確定した用語も判断も次の人に伝わらない。`CONTEXT.md` と `docs/adr/` が空のまま古びる原因はたいていここにある。
 
+### skill が何をどこに書くか
+
+```mermaid
+flowchart LR
+    s1["/grilling<br/>/to-spec<br/>/wayfinder"] --> scratch[".scratch/<br/>個人・管理外<br/>消えてよい"]
+    s2["/grill-with-docs<br/>/domain-modeling"] --> mem["CONTEXT.md<br/>docs/adr/<br/>残る"]
+    s3["/to-tickets<br/>/triage"] --> task["タスク管理<br/>チケットとラベル<br/>残る"]
+    s4["/implement<br/>/tdd<br/>/resolving-merge-conflicts"] --> code["コードとテスト<br/>残る"]
+    s5["/code-review"] --> pr["変更提案のコメント"]
+    s6["/research /prototype<br/>/handoff /diagnosing-bugs<br/>など"] --> ask["保存先は決まっていない<br/>人間に確認する"]
+    scratch -.->|確定したら移す| mem
+    scratch -.->|確定したら移す| task
+```
+
+**`.scratch/` に書くものは消えてよい。** バージョン管理外で、他人には見えない。残したければ点線のとおり移す必要がある。
+
+**`/grill-with-docs` だけが、詰めた結果を直接リポジトリの記憶に書く。** これが `/grilling` との唯一の違いで、既定にする理由でもある。
+
+図に保存先を書いてあるのは `docs/agents/issue-tracker.md` の振り分け表に載っている skill と、出力先が自明なものだけ。**それ以外は保存先が決まっていないので、勝手に決めずに確認すること。** 例えば `/research` は説明上リポジトリ内にファイルを作るとされていて、`.scratch/` とは扱いが違う。
+
 **`/to-spec` は起票ではなく確定させるフェーズ。** 出力先は `.scratch/` で、タスク管理に載せるのは `/to-tickets` の役目。振り分けの正本は `docs/agents/issue-tracker.md` にある。
 
 導入されていない skill もある。手元で使えるものは `copilot skill list`、または Claude Code で `/` を入力して確かめる。
