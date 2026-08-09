@@ -64,16 +64,16 @@ grep scratch .gitignore
 ```mermaid
 flowchart TB
     idea(["課題・要望・気づき"]) --> fixed{"やることが<br/>確定しているか"}
-    fixed -->|いいえ| scratch[".scratch/ で調べる<br/>個人・管理外"]
+    fixed -->|いいえ| scratch[".scratch/ で調べる<br/>個人・管理外<br/>/grilling /research /to-spec"]
     scratch --> settled{"確定したか"}
     settled -->|まだ| scratch
     settled -->|やること| task
-    fixed -->|はい| task["タスク管理に起票<br/>triage でラベル"]
-    task --> impl["実装する<br/>エージェント / 自分"]
-    impl --> check{"CI と<br/>レビュー"}
+    fixed -->|はい| task["タスク管理に起票<br/>/to-tickets /triage"]
+    task --> impl["実装する<br/>エージェント / 自分<br/>/implement /tdd"]
+    impl --> check{"CI と<br/>レビュー<br/>/code-review"}
     check -->|直す| impl
     check -->|通った| merged(["既定ブランチに入る"])
-    merged --> keep["学びを残す<br/>CONTEXT.md / docs/adr/"]
+    merged --> keep["学びを残す<br/>CONTEXT.md / docs/adr/<br/>/domain-modeling"]
     settled -.->|用語・設計判断| keep
     keep -.->|次の課題の前提になる| idea
 ```
@@ -83,6 +83,33 @@ flowchart TB
 右側の点線が**戻りの流れ**。`.scratch/` で用語や設計判断が固まったら、実装を待たずに `CONTEXT.md` と `docs/adr/` へ移す。マージ後も同じ。**マージして終わりにすると、次の人が同じ議論をやり直すことになる。**
 
 triage で `needs-info` が付いたものは、情報が揃うまで実装に進まない。ラベルの意味は `docs/agents/triage-labels.md` にある。
+
+### フェーズごとに使う skill
+
+図に入りきらないものも含めた一覧。**どれを使えばよいか分からないときは `/ask-matt` が案内する。**
+
+| フェーズ | skill | 使いどころ |
+| --- | --- | --- |
+| 確定させる | `/grilling` | 計画や決定を問い詰めて曖昧さを潰す |
+| | `/grill-with-docs` | 同上。用語集と ADR を書きながら進める |
+| | `/research` | 一次情報に当たって調べ、結果を残す |
+| | `/prototype` | 使い捨ての実装で設計判断を確かめる |
+| | `/to-spec` | 会話の内容を spec にまとめる |
+| | `/wayfinder` | 1 セッションに収まらない規模を地図に分解する |
+| 起票 | `/to-tickets` | spec や計画を実装チケットに割る |
+| | `/triage` | ラベルを付けて状態を進める |
+| 実装 | `/implement` | spec やチケットから実装する |
+| | `/tdd` | テストを先に書いて進める |
+| | `/diagnosing-bugs` | 原因の分からない不具合や性能退行を切り分ける |
+| | `/resolving-merge-conflicts` | マージ衝突を解消する |
+| レビュー | `/code-review` | 規約と spec の 2 軸で差分を見る |
+| 残す | `/domain-modeling` | 用語集と ADR を育てる |
+| 横断 | `/ask-matt` | どの skill を使うか分からないとき |
+| | `/handoff` | 会話を引き継ぎ文書に圧縮する |
+
+**`/to-spec` は起票ではなく確定させるフェーズ。** 出力先は `.scratch/` で、タスク管理に載せるのは `/to-tickets` の役目。振り分けの正本は `docs/agents/issue-tracker.md` にある。
+
+導入されていない skill もある。手元で使えるものは `copilot skill list`、または Claude Code で `/` を入力して確かめる。
 
 skill ごとの振り分けは `docs/agents/issue-tracker.md` の表にある。表に無い skill を使うときは、自分で判断せず確認すること。
 
