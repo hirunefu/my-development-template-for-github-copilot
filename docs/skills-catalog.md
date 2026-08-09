@@ -3,8 +3,9 @@
 
 # Skill カタログ
 
+**読み手**: どの skill があるかを探す人。導入方法は [skills.md](./skills.md) を参照。
+
 [mattpocock/skills](https://github.com/mattpocock/skills) が提供する skill の一覧。
-導入方法と使い方は [skills.md](./skills.md) を参照。
 
 各 skill の説明文は上流の `SKILL.md` から機械的に抽出したもの。
 Copyright (c) 2026 Matt Pocock、MIT License。詳細はリポジトリ直下の `NOTICE` を参照。

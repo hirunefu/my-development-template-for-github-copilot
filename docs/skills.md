@@ -1,5 +1,7 @@
 # Skill のセットアップと使い方
 
+**読み手**: skill を導入する人。プロジェクトごとに一度だけ通る。
+
 このテンプレートは [mattpocock/skills](https://github.com/mattpocock/skills) の skill 群を前提にしている。`docs/agents/` にある設定は、それらの skill が読むために置かれている。
 
 skill を入れていなくてもリポジトリは壊れないが、`docs/agents/issue-tracker.md` の振り分け表に並ぶ `/to-spec` や `/wayfinder` といったコマンドは存在しないままになる。

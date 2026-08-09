@@ -1,5 +1,7 @@
 # 既存プロジェクトへの導入
 
+**読み手**: 既に動いているリポジトリにこのテンプレートを持ち込む人。
+
 既に動いているリポジトリにこのテンプレートを持ち込む手順。新規リポジトリを作る場合は `README.md` の「使い方」を参照。
 
 **この手順は自動化されていない。** ファイルを手で置き、既存の運用と噛み合わない部分を手で直す。抜けを検出する仕組みは無いので、最後の確認は目視で行う。
@@ -13,6 +15,7 @@
 | エージェント向け指示 | `AGENTS.md`、`CLAUDE.md` |
 | ドメイン文書の置き場所 | `CONTEXT.md`（雛形）、`docs/adr/README.md` |
 | 運用規約の汎用部分 | `docs/agents/`、`docs/skills.md`、`NOTICE` |
+| 参加者向けの案内 | `docs/onboarding.md` |
 
 残りは任意。CI（`.github/`）と GitHub 層（`docs/github/`）は、必要になった時点で足す。
 
@@ -41,6 +44,7 @@ docs/agents/
 docs/adr/README.md
 docs/checklist.md
 docs/skills.md
+docs/onboarding.md
 ```
 
 `NOTICE` を含めるのは、`docs/agents/` が MIT の上流テンプレートからの派生物だから。**残す限り帰属表示も一緒に持ち込む必要がある。** 導入先に既に `NOTICE` がある場合は、その節を追記する形にする。

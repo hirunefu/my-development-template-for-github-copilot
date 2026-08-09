@@ -1,5 +1,7 @@
 # エージェント向け開発テンプレート
 
+**読み手**: このテンプレートの採用を検討している人、および導入作業をする人。
+
 コーディングエージェント（GitHub Copilot、Claude Code など）にプロジェクトの前提を伝える設定を、再利用可能な形でまとめたテンプレート。コードそのものではなく「エージェントとの働き方」を配布する。
 
 技術スタックには依存しない。前提にしているのは **Copilot CLI と VS Code Chat が指示ファイルと skill をどう読むか**だけで、issue tracker・CI・ホスティングはプロジェクトごとに差し替えられる。
@@ -21,6 +23,7 @@
 | `docs/skills-catalog.md` | 上流 skill の一覧（生成物） |
 | `docs/adopt-existing.md` | 既存プロジェクトへの導入手順 |
 | `docs/checklist.md` | 導入後の確認項目 |
+| `docs/onboarding.md` | プロジェクトに参加した人向けのガイド（雛形） |
 | `scripts/gen-skills-catalog.py` | カタログの生成 |
 
 ### GitHub 層（任意）
@@ -49,7 +52,8 @@ GitHub を使わないなら `docs/github/` ごと削除し、`.github/` の中�
 5. `AGENTS.md` をプロジェクトに合わせて調整する。とくに「リポジトリ構成」表から、削除したものの行を消す
 6. GitHub を使うなら `docs/github/` の手順を上から実行する（ラベル作成 → CI をマージ → **緑を確認** → ブランチ保護）
 7. `docs/checklist.md` で抜けが無いか確認する。GitHub を使うなら `docs/github/checklist.md` も
-8. 用語が固まったら `CONTEXT.md`、設計を決めたら `docs/adr/` に追記する。先回りして空のファイルを埋めない
+8. `docs/onboarding.md` の雛形部分（プロジェクトの説明、環境の立ち上げ方、相談先）を埋める。参加者が最初に読むファイルになる
+9. 用語が固まったら `CONTEXT.md`、設計を決めたら `docs/adr/` に追記する。先回りして空のファイルを埋めない
 
 既存のリポジトリに入れる場合は `docs/adopt-existing.md` を参照。
 
