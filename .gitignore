@@ -4,3 +4,7 @@
 
 # Claude Code の個人設定
 CLAUDE.local.md
+
+# Claude Code のプロジェクト個人設定
+# .claude/skills/ はコミットする。詳細は docs/skills-authoring.md
+.claude/settings.local.json

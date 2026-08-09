@@ -119,6 +119,7 @@ triage で `needs-info` が付いたものは、情報が揃うまで実装に�
 | | 作業者 | `/resolving-merge-conflicts` | マージ衝突を解消する |
 | レビュー | メンテナ | `/code-review` | 規約と spec の 2 軸で差分を見る |
 | 残す | 両方 | `/domain-modeling` | 用語集と ADR を育てる |
+| | 両方 | `/writing-for-agents` | skill や `AGENTS.md` を書く・直す。手順を skill にするときはこれ（`docs/skills-authoring.md`） |
 | 横断 | 両方 | `/ask-matt` | どの skill を使うか分からないとき |
 | | 両方 | `/handoff` | 会話を引き継ぎ文書に圧縮する |
 
@@ -199,6 +200,7 @@ skill ごとの振り分けは `docs/agents/issue-tracker.md` の表にある。
 | `AGENTS.md` | このプロジェクトでの働き方。**最初に読む** |
 | `CONTEXT.md` | ドメイン用語集。概念の呼び方に迷ったら見る |
 | `docs/skills.md` | skill の導入手順 |
+| `docs/skills-authoring.md` | このプロジェクト固有の skill を自分で書くとき |
 | `docs/agents/issue-tracker.md` | 作業をどこに置くかの振り分け |
 | `docs/agents/triage-labels.md` | triage のラベル語彙 |
 | `docs/adr/` | 設計決定と、その理由。「なぜこうなっているのか」を調べるとき |
@@ -207,14 +209,17 @@ skill ごとの振り分けは `docs/agents/issue-tracker.md` の表にある。
 
 `docs/template/` があっても読まなくてよい。このリポジトリの土台になったテンプレート自体の記録で、このプロジェクトの内容ではない。
 
-## 用語や設計を追記するとき
+## 用語・設計・手順を追記するとき
 
-**先回りして書かない。** `CONTEXT.md` も `docs/adr/` も、実際に必要になった時点で追記する。
+**先回りして書かない。** どれも、実際に必要になった時点で追記する。
 
 - **用語** — 同じ概念に複数の呼び方が出てきて混乱したとき、`CONTEXT.md` に定義する
 - **設計決定** — 「取り消しが難しい」「文脈がないと驚く」「実在のトレードオフの結果」の 3 つをすべて満たすとき、`docs/adr/` に記録する。基準の詳細は `docs/adr/README.md`
+- **手順・レビュー観点** — 特定の場面でだけ必要な進め方を、毎回説明し直していると気づいたとき、`.claude/skills/` に skill として置く。書き方は `docs/skills-authoring.md`
 
-どちらも `/domain-modeling` skill が支援する。
+用語と設計決定は `/domain-modeling` skill が支援する。
+
+**3 つの境目。**「それが何であるか」は `CONTEXT.md`、「なぜそうしたか」は `docs/adr/`、「どう進めるか」は skill。skill に用語や決定を書き写すと、更新したときに片方だけ古くなる。
 
 ## 困ったとき
 
