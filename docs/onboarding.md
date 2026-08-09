@@ -10,6 +10,19 @@
 > - 「最初にやること」の 4 — 開発環境の立ち上げ方
 > - 「困ったとき」— 相談先
 
+## 2 つの役割
+
+このガイドは 2 つの役割を区別して書いてある。**人事上の役職ではなく、このリポジトリ上の役割**であり、同じ人が両方を兼ねることもある。
+
+| 役割 | 持つもの |
+| --- | --- |
+| **作業者** | 課題を調べ、起票し、実装し、変更提案を出す。参加者の既定はこちら |
+| **メンテナ** | 受け入れの判断、レビューとマージ、リポジトリの設定（ラベル、ブランチ保護、CI） |
+
+`docs/agents/triage-labels.md` の `needs-triage`（メンテナが評価する必要がある）や、`docs/github/branch-protection.md` の設定手順は、いずれもメンテナ側の作業を指している。
+
+**自分がどちらか分からないときは、マージ権限があるかで判断する。** 権限があればメンテナ側の責務も持つ。
+
 ## このプロジェクトについて
 
 （何を作っているプロジェクトなのかを 2〜3 文で書く。ドメインの用語は `CONTEXT.md` に定義がある。）
@@ -64,16 +77,18 @@ grep scratch .gitignore
 ```mermaid
 flowchart TB
     idea(["課題・要望・気づき"]) --> fixed{"やることが<br/>確定しているか"}
-    fixed -->|いいえ| scratch[".scratch/ で調べる<br/>個人・管理外<br/>/grilling /research /to-spec"]
+    fixed -->|いいえ| scratch[".scratch/ で調べる<br/>【作業者】<br/>/grilling /research /to-spec"]
     scratch --> settled{"確定したか"}
     settled -->|まだ| scratch
     settled -->|やること| task
-    fixed -->|はい| task["タスク管理に起票<br/>/to-tickets /triage"]
-    task --> impl["実装する<br/>エージェント / 自分<br/>/implement /tdd"]
-    impl --> check{"CI と<br/>レビュー<br/>/code-review"}
+    fixed -->|はい| task["起票する<br/>【作業者】<br/>/to-tickets"]
+    task --> triage["受け入れを判断する<br/>【メンテナ】<br/>/triage"]
+    triage -->|情報不足| scratch
+    triage -->|着手してよい| impl["実装する<br/>【作業者】<br/>/implement /tdd"]
+    impl --> check{"CI とレビュー<br/>【メンテナ】<br/>/code-review"}
     check -->|直す| impl
-    check -->|通った| merged(["既定ブランチに入る"])
-    merged --> keep["学びを残す<br/>CONTEXT.md / docs/adr/<br/>/domain-modeling"]
+    check -->|通った| merged(["マージする<br/>【メンテナ】"])
+    merged --> keep["学びを残す<br/>【両方】<br/>/domain-modeling"]
     settled -.->|用語・設計判断| keep
     keep -.->|次の課題の前提になる| idea
 ```
@@ -88,24 +103,26 @@ triage で `needs-info` が付いたものは、情報が揃うまで実装に�
 
 図に入りきらないものも含めた一覧。**どれを使えばよいか分からないときは `/ask-matt` が案内する。**
 
-| フェーズ | skill | 使いどころ |
-| --- | --- | --- |
-| 確定させる | `/grilling` | 計画や決定を問い詰めて曖昧さを潰す |
-| | `/grill-with-docs` | 同上。用語集と ADR を書きながら進める |
-| | `/research` | 一次情報に当たって調べ、結果を残す |
-| | `/prototype` | 使い捨ての実装で設計判断を確かめる |
-| | `/to-spec` | 会話の内容を spec にまとめる |
-| | `/wayfinder` | 1 セッションに収まらない規模を地図に分解する |
-| 起票 | `/to-tickets` | spec や計画を実装チケットに割る |
-| | `/triage` | ラベルを付けて状態を進める |
-| 実装 | `/implement` | spec やチケットから実装する |
-| | `/tdd` | テストを先に書いて進める |
-| | `/diagnosing-bugs` | 原因の分からない不具合や性能退行を切り分ける |
-| | `/resolving-merge-conflicts` | マージ衝突を解消する |
-| レビュー | `/code-review` | 規約と spec の 2 軸で差分を見る |
-| 残す | `/domain-modeling` | 用語集と ADR を育てる |
-| 横断 | `/ask-matt` | どの skill を使うか分からないとき |
-| | `/handoff` | 会話を引き継ぎ文書に圧縮する |
+| フェーズ | 担当 | skill | 使いどころ |
+| --- | --- | --- | --- |
+| 確定させる | 作業者 | `/grilling` | 計画や決定を問い詰めて曖昧さを潰す |
+| | 作業者 | `/grill-with-docs` | 同上。用語集と ADR を書きながら進める |
+| | 作業者 | `/research` | 一次情報に当たって調べ、結果を残す |
+| | 作業者 | `/prototype` | 使い捨ての実装で設計判断を確かめる |
+| | 作業者 | `/to-spec` | 会話の内容を spec にまとめる |
+| | メンテナ | `/wayfinder` | 1 セッションに収まらない規模を地図に分解する |
+| 起票 | 作業者 | `/to-tickets` | spec や計画を実装チケットに割る |
+| 受け入れ | メンテナ | `/triage` | ラベルを付けて状態を進める |
+| 実装 | 作業者 | `/implement` | spec やチケットから実装する |
+| | 作業者 | `/tdd` | テストを先に書いて進める |
+| | 作業者 | `/diagnosing-bugs` | 原因の分からない不具合や性能退行を切り分ける |
+| | 作業者 | `/resolving-merge-conflicts` | マージ衝突を解消する |
+| レビュー | メンテナ | `/code-review` | 規約と spec の 2 軸で差分を見る |
+| 残す | 両方 | `/domain-modeling` | 用語集と ADR を育てる |
+| 横断 | 両方 | `/ask-matt` | どの skill を使うか分からないとき |
+| | 両方 | `/handoff` | 会話を引き継ぎ文書に圧縮する |
+
+**担当は既定であって、禁止ではない。** 作業者が `/code-review` を自分の差分に当ててから出してもよいし、メンテナが実装してもよい。分けているのは**責任の所在**であって、道具の使用権ではない。
 
 **`/to-spec` は起票ではなく確定させるフェーズ。** 出力先は `.scratch/` で、タスク管理に載せるのは `/to-tickets` の役目。振り分けの正本は `docs/agents/issue-tracker.md` にある。
 
@@ -113,9 +130,20 @@ triage で `needs-info` が付いたものは、情報が揃うまで実装に�
 
 skill ごとの振り分けは `docs/agents/issue-tracker.md` の表にある。表に無い skill を使うときは、自分で判断せず確認すること。
 
+### メンテナだけがやること
+
+作業者は読み飛ばしてよい。ただし**誰かが必ずやる必要がある**ので、メンテナが不在のプロジェクトでは作業者が兼ねる。
+
+- **受け入れの判断** — 起票されたものに `needs-triage` から始まるラベルを付け、`ready-for-agent` / `ready-for-human` / `needs-info` / `wontfix` のどれかへ進める（`docs/agents/triage-labels.md`）
+- **レビューとマージ** — 変更提案を承認し、既定ブランチに入れる
+- **リポジトリの設定** — ラベルの作成、ブランチ保護、CI の required status check（`docs/github/` 配下）
+- **設定の維持** — `AGENTS.md` と `docs/agents/` を実態に合わせて更新する。skill の導入方針とバージョンの更新（`docs/skills.md`、`README.md` の「ツールのバージョン更新」）
+
+**CI が赤いまま放置されないようにするのもメンテナの責務。** ブランチ保護を設定していないリポジトリでは、CI が落ちていてもマージできてしまう。
+
 ## 守ること
 
-`AGENTS.md` に書いてある規約は、エージェントだけでなく**あなたにも適用される**。要点は次の 4 つ。
+**作業者とメンテナの両方に適用される。** `AGENTS.md` に書いてある規約は、エージェントだけでなく**あなたにも適用される**。要点は次の 4 つ。
 
 - **バージョン管理の履歴を書き換えない** — force push、`reset --hard`、push 済みコミットの amend
 - **既定ブランチには変更提案（pull request / merge request）経由で入れる**
