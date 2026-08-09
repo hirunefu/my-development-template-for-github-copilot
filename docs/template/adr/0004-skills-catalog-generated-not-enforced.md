@@ -1,10 +1,10 @@
 # skill カタログは生成物にするが、CI では検査しない
 
-`docs/skills-catalog.md` は `.github/scripts/gen-skills-catalog.py` の生成物だが、生成結果と一致するかを検査する CI は置かない。
+`docs/skills-catalog.md` は `scripts/gen-skills-catalog.py` の生成物だが、生成結果と一致するかを検査する CI は置かない。
 
 ## 背景
 
-このリポジトリは `AGENTS.md` と `.github/copilot-instructions.md` の複製について、CI で byte-identical を強制している（`docs/adr/0001-duplicate-instruction-files.md`）。同じ理屈なら、上流から複製したカタログも CI で検査するのが一貫して見える。
+このリポジトリは `AGENTS.md` と `.github/copilot-instructions.md` の複製について、CI で byte-identical を強制している（[0001-duplicate-instruction-files.md](./0001-duplicate-instruction-files.md)）。同じ理屈なら、上流から複製したカタログも CI で検査するのが一貫して見える。
 
 しかし検査対象が違う。指示ファイルの同期は**リポジトリ内で完結する**が、カタログの検査は **`mattpocock/skills` という第三者リポジトリへのネットワークアクセスを CI に持ち込む**。
 
@@ -21,7 +21,7 @@
 ## 却下した選択肢
 
 - **生成スクリプト + CI 検査** — 上流が動けば PR で自動的に気づける。第三者リポジトリへの依存を複写先の CI に持ち込む点で却下した。required にしなければブロックはしないが、赤い CI は無視される習慣を作る。
-- **出典の明記だけ（スクリプトなし）** — 更新のたびに 35 件を手で転記することになり、誤りが混入する。
+- **出典の明記だけ（スクリプトなし）** — 更新のたびに数十件を手で転記することになり、誤りが混入する。
 - **手動更新の手順を書くだけ** — 上と同じ問題に加えて、再現性も無い。
 
 ## 帰結

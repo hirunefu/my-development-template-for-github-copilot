@@ -4,7 +4,7 @@
 SkillSpector の終了コードは score が 50 を超えたときしか 1 にならない。
 検査の半分が劣化していても SAFE / 終了コード 0 を返すため、終了コードだけを
 見る CI は「偽の緑」を通してしまう。判断の根拠は
-docs/adr/0003-gate-on-analyzer-degradation.md を参照。
+docs/template/adr/0003-gate-on-analyzer-degradation.md を参照。
 """
 
 import json

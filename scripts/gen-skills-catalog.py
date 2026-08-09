@@ -3,8 +3,8 @@
 
 使い方:
 
-    python3 .github/scripts/gen-skills-catalog.py
-    python3 .github/scripts/gen-skills-catalog.py --source <既存のチェックアウト>
+    python3 scripts/gen-skills-catalog.py
+    python3 scripts/gen-skills-catalog.py --source <既存のチェックアウト>
 
 出力は決定的で、上流が動いていなければ再実行しても差分は出ない。生成日時では
 なく上流のコミット日時を埋め込んでいるのはそのため。
@@ -135,12 +135,15 @@ def render(skills, revision, revision_date):
 
     out = [
         "<!-- このファイルは生成物です。手で編集しないでください。 -->",
-        "<!-- 更新: python3 .github/scripts/gen-skills-catalog.py -->",
+        "<!-- 更新: python3 scripts/gen-skills-catalog.py -->",
         "",
         "# Skill カタログ",
         "",
         "[mattpocock/skills](https://github.com/mattpocock/skills) が提供する skill の一覧。",
         "導入方法と使い方は [skills.md](./skills.md) を参照。",
+        "",
+        "各 skill の説明文は上流の `SKILL.md` から機械的に抽出したもの。",
+        "Copyright (c) 2026 Matt Pocock、MIT License。詳細はリポジトリ直下の `NOTICE` を参照。",
         "",
         f"- 上流のリビジョン: `{revision}`（{revision_date}）",
         f"- 収録数: {total} 件。うち {user_only} 件はユーザーが明示的に呼び出す skill",

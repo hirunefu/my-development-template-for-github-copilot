@@ -11,23 +11,23 @@
 
 - ルートの **`CONTEXT.md`**、または
 - ルートに **`CONTEXT-MAP.md`** があればそれ（context ごとの `CONTEXT.md` を指している）。トピックに関係するものをすべて読む。
-- **`docs/adr/`** — これから触る領域に関わる ADR を読む。multi-context リポジトリでは `src/<context>/docs/adr/` の context 固有の決定も確認する。
+- **`docs/adr/`** — これから触る領域に関わる ADR を読む。multi-context 構成では context 固有の `docs/adr/` も確認する。
 
 これらのファイルが存在しない場合は**黙って先に進む**。不在を指摘したり、先回りして作成を提案したりしない。`/domain-modeling` skill（`/grill-with-docs` や `/improve-codebase-architecture` から到達する）が、用語や決定が実際に確定した時点で遅延的に作成する。
 
 ## ファイル構成
 
-このリポジトリは **single-context** 構成:
+既定は **single-context** 構成:
 
 ```
 /
-├── CONTEXT.md
-├── docs/adr/
-│   └── 0001-duplicate-instruction-files.md
-└── src/
+├── CONTEXT.md          このプロジェクトの用語集
+└── docs/adr/           このプロジェクトの設計決定（0001 から連番）
 ```
 
-将来リポジトリが複数の context に分かれたら、ルートに `CONTEXT-MAP.md` を置き、`src/<context>/CONTEXT.md` と `src/<context>/docs/adr/` に分割する（その場合ルートの `docs/adr/` はシステム全体の決定を持つ）。
+**`docs/template/` を参照しないこと。** そこにあるのはこのリポジトリの土台になったテンプレート自体の用語集と設計記録で、このプロジェクトのドメインではない。
+
+将来リポジトリが複数の context に分かれたら、ルートに `CONTEXT-MAP.md` を置き、context ごとに `CONTEXT.md` と `docs/adr/` を分割する（その場合ルートの `docs/adr/` はシステム全体の決定を持つ）。ただし `CONTEXT-MAP.md` の雛形はこのテンプレートには含めていない。必要になった時点で作る。
 
 ## glossary の語彙を使う
 

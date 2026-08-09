@@ -1,5 +1,9 @@
 # エージェント向け指示ファイルを 2 つに複製する
 
+> **Status: superseded by [0006](./0006-limit-copilot-surfaces.md)**
+> 対象サーフェスを Copilot CLI と VS Code Chat に限定した結果、二重化の根拠が失われた。
+> 記録として残すが、現在の構成には適用されない。
+
 `AGENTS.md` と `.github/copilot-instructions.md` に同一内容を置き、CI で byte-identical を強制する。
 
 ## 背景

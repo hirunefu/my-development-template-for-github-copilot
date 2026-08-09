@@ -31,7 +31,7 @@ jobs:
           curl -sSfL -o checksums.txt "${base}/gitleaks_${GITLEAKS_VERSION}_checksums.txt"
           # 照合結果をパイプで sha256sum に渡さないこと。取得したものを
           # シェルに流し込むパターンとして誤検知される。
-          # 理由は docs/adr/0002-gitleaks-cli-over-action.md を参照。
+          # 理由は docs/template/adr/0002-gitleaks-cli-over-action.md を参照。
           grep "  ${archive}\$" checksums.txt > expected.sha256
           sha256sum -c expected.sha256
           tar xzf "$archive" gitleaks
@@ -72,7 +72,10 @@ jobs:
   skillspector:
     runs-on: ubuntu-latest
     env:
-      SKILLSPECTOR_VERSION: v2.8.2
+      # タグではなくコミットの完全な SHA で固定する。タグは上流が付け替えられるため、
+      # 検査ツール自体を検証なしで取得しないという方針（docs/template/adr/0002）と揃わない。
+      # 対応する版: v2.8.2
+      SKILLSPECTOR_REVISION: 2bc641fd0639550a1cae9557491f483e30520afb
     steps:
       - uses: actions/checkout@v7
 
@@ -81,7 +84,7 @@ jobs:
           python-version: "3.12"
 
       - name: SkillSpector を導入する
-        run: pip install "git+https://github.com/NVIDIA/skillspector.git@${SKILLSPECTOR_VERSION}"
+        run: pip install "git+https://github.com/NVIDIA/skillspector.git@${SKILLSPECTOR_REVISION}"
 
       - name: エージェント資産を検査する
         run: |
