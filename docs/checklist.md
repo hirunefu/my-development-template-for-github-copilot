@@ -79,3 +79,11 @@ copilot skill list
 ```
 
 `setup-matt-pocock-skills` を含む一覧が出ること。Claude Code なら `/` を入力して候補に出るか確認する。導入手順は `docs/skills.md`。
+
+自分で書いた skill を `.claude/skills/` に置いた場合は、同じ一覧に Project skills として並ぶ。例をコピーしたまま書き換え忘れていないかも確認する。
+
+```
+ls .claude/skills/ 2>/dev/null | grep -x "order-cancellation\|database-migration\|public-api-compat"
+```
+
+何もヒットしないこと。ヒットしたら、テンプレートに付属していた例が名前も中身も書き換えられずに残っている。書き方は `docs/skills-authoring.md`。
