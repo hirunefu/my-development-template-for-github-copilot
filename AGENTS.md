@@ -19,7 +19,9 @@
 | `docs/adr/` | このプロジェクトの設計決定とその理由 |
 | `docs/agents/` | issue tracker とドメイン文書の運用規約（ホスティング非依存） |
 | `docs/skills.md` | skill の導入手順と、設定がどう読まれるか |
+| `docs/skills-authoring.md` | このプロジェクト固有の skill を自分で書くときの手順 |
 | `docs/skills-catalog.md` | skill の一覧。**生成物なので手で編集しない**（無いこともある） |
+| `.claude/skills/` | このプロジェクト固有の skill。Claude Code と Copilot の両方が読む（無いこともある） |
 | `docs/checklist.md` | 導入後の確認項目 |
 | `docs/onboarding.md` | このプロジェクトに参加した人が最初に読むガイド |
 | `scripts/` | カタログ生成などの補助スクリプト（無いこともある） |
@@ -31,7 +33,7 @@
 
 **`docs/template/` が存在する場合、そこはテンプレート自身についての記録であり、このプロジェクトのドメインではない。** 用語や設計決定を探すときに参照しないこと。複写先では削除されていることがある。
 
-設定を壊す操作を避けるため、skill を導入・再設定する前に `docs/skills.md` を読むこと。
+設定を壊す操作を避けるため、skill を導入・再設定する前に `docs/skills.md` を読むこと。skill を新しく書く前には `docs/skills-authoring.md` を読むこと。用語の定義は `CONTEXT.md`、決定は `docs/adr/` にあり、skill に書き写すと正典が二重になる。
 
 ## エージェントへの制約
 

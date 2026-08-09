@@ -32,6 +32,14 @@ _Avoid_: 誤検知、false positive（意味が逆）、見逃し
 エージェントが必要に応じて読み込む手順書。`SKILL.md` を持つディレクトリとして配布され、Claude Code と Copilot の双方が同じ形式を解釈する。指示ファイルが常時読み込まれるのに対し、skill は場面に応じて選ばれる。
 _Avoid_: コマンド、プラグイン、拡張
 
+**プロジェクト skill**:
+リポジトリに含めて配布する skill。`.claude/skills/` に置き、clone した全員に届く。
+_Avoid_: ローカル skill、リポジトリ skill、自作 skill
+
+**個人 skill**:
+各自のマシンに導入する skill。`~/.agents/skills/` に置き、他の参加者には届かない。
+_Avoid_: グローバル skill、ユーザ skill
+
 **作業者**:
 課題を調べ、起票し、実装し、変更提案を出す役割。プロジェクト参加者の既定。
 _Avoid_: 開発者、担当者、実装者、コントリビュータ

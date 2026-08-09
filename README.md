@@ -20,6 +20,7 @@
 | `docs/adr/` | 設計決定の置き場所。空で始まる |
 | `docs/agents/` | issue tracker とドメイン文書の運用規約 |
 | `docs/skills.md` | skill の導入手順 |
+| `docs/skills-authoring.md` | プロジェクト固有の skill を自分で書く手順 |
 | `docs/skills-catalog.md` | 上流 skill の一覧（生成物） |
 | `docs/adopt-existing.md` | 既存プロジェクトへの導入手順 |
 | `docs/checklist.md` | 導入後の確認項目 |

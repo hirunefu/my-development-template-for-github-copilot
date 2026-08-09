@@ -6,7 +6,7 @@
 
 skill を入れていなくてもリポジトリは壊れないが、`docs/agents/issue-tracker.md` の振り分け表に並ぶ `/to-spec` や `/wayfinder` といったコマンドは存在しないままになる。
 
-skill の一覧は [skills-catalog.md](./skills-catalog.md) にある。
+skill の一覧は [skills-catalog.md](./skills-catalog.md) にある。**このプロジェクト固有の知識・規約・レビュー観点を自分で skill にする**話は [skills-authoring.md](./skills-authoring.md) にある。
 
 ## 導入
 
@@ -40,7 +40,9 @@ npx skills@1.5.22 add mattpocock/skills -g
 ### 採らなかった方法
 
 - `claude plugins install mattpocock-skills` — 読み取り専用で自動更新される利点はあるが、**Claude Code 専用**で Copilot には効かない。Copilot を主要な対象に含むこのテンプレートとは相性が悪い
-- プロジェクトレベル導入（`.claude/skills/` にコミット）— clone するだけで揃う反面、skill 一式をこのリポジトリに同梱することになり、上流への追従が手作業になる
+- 上流 skill 一式のプロジェクトレベル導入（`mattpocock/skills` を `.claude/skills/` にコミット）— clone するだけで揃う反面、skill 一式をこのリポジトリに同梱することになり、上流への追従が手作業になる
+
+退けたのは**上流の skill を同梱すること**であって、`.claude/skills/` というディレクトリ自体ではない。このプロジェクト向けに自分で書く skill はそこに置く。書き方は [skills-authoring.md](./skills-authoring.md) を参照。
 
 ## `/setup-matt-pocock-skills` は実行しない
 
