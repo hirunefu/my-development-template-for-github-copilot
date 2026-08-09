@@ -18,7 +18,11 @@ npx skills@1.5.22 add mattpocock/skills -g
 
 `-g` はグローバル導入で、`~/.agents/skills/` に実体が置かれる。対話的に skill とエージェントを選ぶ形式なので、少なくとも `setup-matt-pocock-skills` を含めて選ぶこと。
 
-上流の README はバージョンを固定しない形を示しているが、ここでは固定している。固定しなければ、上流が侵害された場合に悪意ある更新をそのまま取り込む経路になり、このリポジトリが gitleaks や SkillSpector をピン留めしている方針とも矛盾するため。更新時は `README.md` の「ツールのバージョン更新」に従って上げる。
+上流の README はバージョンを固定しない形を示しているが、ここでは固定している。固定しなければ、上流が侵害された場合に悪意ある更新をそのまま取り込む経路になるため。更新時は `README.md` の「ツールのバージョン更新」に従って上げる。
+
+**ただし固定できているのはインストーラ CLI だけで、skill の中身は固定できていない。** `mattpocock/skills` はリビジョン指定なしで取得されるため、導入した時点の上流の内容が入る。skill 本体はエージェントが読む指示そのものなので、**供給網としてはここが最も重要なのに塞げていない**。これは既知の限界として受け入れている。
+
+緩和になるのは、導入時に `~/.agents/.skill-lock.json` が skill ごとのハッシュを記録することだけ。何が入ったかは後から確認できるが、入る前に検証はできない。**組織で採用する際は、この点を承知の上で判断すること。**
 
 ### 一度の導入で Claude Code と Copilot CLI の両方に効く
 
@@ -40,9 +44,9 @@ npx skills@1.5.22 add mattpocock/skills -g
 
 上流の README は「リポジトリごとに 1 回実行する」よう指示しているが、**このテンプレートから作ったリポジトリでは実行しないこと。**
 
-`docs/agents/` の設定は既に入っている。加えて `issue-tracker.md` の二層構成（`.scratch/` と GitHub Issues を skill 名で振り分ける）は、あの skill が提示する 4 択（GitHub / GitLab / ローカル markdown / その他）には存在しない独自設定で、実行すると標準テンプレートで上書きされて失われる。
+`docs/agents/` の設定は既に入っている。加えて `issue-tracker.md` の二層構成（探索領域とタスク管理を skill 名で振り分ける）は、あの skill が提示する 4 択（GitHub / GitLab / ローカル markdown / その他）には存在しない独自設定で、実行すると標準テンプレートで上書きされて失われる。
 
-理由の詳細は [adr/0005-do-not-rerun-setup-skill.md](./adr/0005-do-not-rerun-setup-skill.md) を参照。
+理由の詳細は [adr/0005-do-not-rerun-setup-skill.md](./template/adr/0005-do-not-rerun-setup-skill.md) を参照。
 
 issue tracker やラベルの構成を変えたくなった場合は、`docs/agents/` を直接編集する。
 
@@ -51,7 +55,7 @@ issue tracker やラベルの構成を変えたくなった場合は、`docs/age
 | ファイル | 読まれ方 |
 | --- | --- |
 | `docs/agents/issue-tracker.md` | `/triage` と `/code-review` がパスで直接参照する。他の skill は `AGENTS.md` の `## Agent skills` ブロックから辿る |
-| `docs/agents/triage-labels.md` | `/triage` が使うラベル語彙。GitHub 上の実ラベルと対応する |
+| `docs/agents/triage-labels.md` | `/triage` が使うラベル語彙。実際のラベル作成手順はトラッカーごとの層に置く |
 | `docs/agents/domain.md` | `CONTEXT.md` と `docs/adr/` の読み方を定める。`/domain-modeling` `/diagnosing-bugs` `/tdd` `/codebase-design` `/improve-codebase-architecture` などが対象 |
 
 どの skill を使えばよいか分からないときは `/ask-matt` が案内する。
@@ -67,9 +71,9 @@ npx skills@1.5.22 update
 カタログの再生成。上流のリビジョンが変わったときに実行する。
 
 ```
-python3 .github/scripts/gen-skills-catalog.py
+python3 scripts/gen-skills-catalog.py
 ```
 
 出力は決定的で、上流が動いていなければ差分は出ない。上流のディレクトリ構成や frontmatter の形式が変わった場合は、誤った内容を書き出さずにエラーで停止する。
 
-**カタログの更新を検査する CI は置いていない。** 理由は [adr/0004-skills-catalog-generated-not-enforced.md](./adr/0004-skills-catalog-generated-not-enforced.md) を参照。上流が変わったことに自動では気づけないため、カタログを信頼する前に冒頭のリビジョンを確認すること。
+**カタログの更新を検査する CI は置いていない。** 理由は [adr/0004-skills-catalog-generated-not-enforced.md](./template/adr/0004-skills-catalog-generated-not-enforced.md) を参照。上流が変わったことに自動では気づけないため、カタログを信頼する前に冒頭のリビジョンを確認すること。

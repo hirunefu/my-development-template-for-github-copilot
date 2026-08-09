@@ -1,0 +1,26 @@
+# サードパーティの著作物について
+
+このリポジトリには、以下の著作物から派生した内容が含まれています。
+
+## mattpocock/skills
+
+- 取得元: https://github.com/mattpocock/skills
+- ライセンス: MIT License
+- 著作権表示: Copyright (c) 2026 Matt Pocock
+
+派生している箇所:
+
+- `docs/agents/issue-tracker.md` — issue tracker の運用規約テンプレートの翻案
+- `docs/agents/triage-labels.md` — triage ラベル定義の翻案
+- `docs/agents/domain.md` — ドメイン文書の読み方を定めたテンプレートの翻訳
+- `docs/skills-catalog.md` — 各 SKILL.md の description を機械的に抽出した生成物
+
+MIT License の全文は上記リポジトリの LICENSE を参照してください。同ライセンスは、複製または実質的部分の再配布にあたって著作権表示と許諾表示を含めることを求めています。
+
+---
+
+以下のツールは CI から実行しているだけで、このリポジトリに再配布していません。したがって著作権表示の義務は生じませんが、参考として記載します。
+
+- gitleaks — https://github.com/gitleaks/gitleaks
+- NVIDIA SkillSpector — https://github.com/NVIDIA/SkillSpector （Apache License 2.0）
+- skills CLI — https://github.com/vercel-labs/skills
