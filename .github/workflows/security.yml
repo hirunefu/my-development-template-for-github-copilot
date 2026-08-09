@@ -31,7 +31,7 @@ jobs:
           curl -sSfL -o checksums.txt "${base}/gitleaks_${GITLEAKS_VERSION}_checksums.txt"
           # 照合結果をパイプで sha256sum に渡さないこと。取得したものを
           # シェルに流し込むパターンとして誤検知される。
-          # 理由は docs/template/adr/0002-gitleaks-cli-over-action.md を参照。
+          # 理由はテンプレート側の ADR-0002 に記録（複写先には無いことがある）。
           grep "  ${archive}\$" checksums.txt > expected.sha256
           sha256sum -c expected.sha256
           tar xzf "$archive" gitleaks
@@ -42,9 +42,12 @@ jobs:
           set -euo pipefail
           # --redact は必須。付けないと検出した秘密そのものが CI ログに出力され、
           # public リポジトリでは漏洩を検知した瞬間に自分で公開することになる。
+          # -v も必須。付けないとログに「leaks found: N」しか出ず、ファイルも行も
+          # 規則名も分からない。--redact があるので秘密は伏字のまま位置だけが出る。
           "$RUNNER_TEMP/gitleaks" git . \
             --no-banner \
             --redact \
+            -v \
             --platform github \
             --report-format json \
             --report-path "$RUNNER_TEMP/gitleaks.json"
@@ -73,7 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # タグではなくコミットの完全な SHA で固定する。タグは上流が付け替えられるため、
-      # 検査ツール自体を検証なしで取得しないという方針（docs/template/adr/0002）と揃わない。
+      # 検査ツール自体を検証なしで取得しないという方針（テンプレート側の ADR-0002）と揃わない。
       # 対応する版: v2.8.2
       SKILLSPECTOR_REVISION: 2bc641fd0639550a1cae9557491f483e30520afb
     steps:

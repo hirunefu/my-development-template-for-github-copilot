@@ -41,9 +41,9 @@
 
 `/wayfinder` が使う。**map** は 1 チケットにつき 1 つの **child** ファイルを持つファイル。
 
-- **Map**: `.scratch/<effort>/map.md` — Notes / Decisions-so-far / Fog の本体
-- **Child ticket**: `.scratch/<effort>/issues/NN-<slug>.md`。`01` から連番で、本文に問いを書く。`Type:` 行にチケット種別（`research`/`prototype`/`grilling`/`task`）、`Status:` 行に `claimed`/`resolved` を記録する
+- **Map**: `.scratch/<slug>/map.md` — Notes / Decisions-so-far / Fog の本体
+- **Child ticket**: `.scratch/<slug>/issues/NN-<slug>.md`。`01` から連番で、本文に問いを書く。`Type:` 行にチケット種別（`research`/`prototype`/`grilling`/`task`）、`Status:` 行に `claimed`/`resolved` を記録する
 - **Blocking**: 冒頭付近の `Blocked by: NN, NN` 行。列挙された全ファイルが `resolved` になった時点でブロック解除
-- **Frontier**: `.scratch/<effort>/issues/` を走査し、open かつ unblocked かつ unclaimed のファイルを探す。番号の小さいものが優先
+- **Frontier**: `.scratch/<slug>/issues/` を走査し、open かつ unblocked かつ unclaimed のファイルを探す。番号の小さいものが優先
 - **Claim**: 作業前に必ず `Status: claimed` に設定して保存する
 - **Resolve**: `## Answer` 見出しの下に答えを追記し、`Status: resolved` に設定。その後 `map.md` の Decisions-so-far に context pointer（要約とリンク）を追記する

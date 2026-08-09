@@ -13,14 +13,20 @@
 - `docs/agents/issue-tracker.md` — issue tracker の運用規約テンプレートの翻案
 - `docs/agents/triage-labels.md` — triage ラベル定義の翻案
 - `docs/agents/domain.md` — ドメイン文書の読み方を定めたテンプレートの翻訳
+- `docs/github/issue-tracker.md` — GitHub Issues 向け運用規約テンプレートの翻案
+- `docs/github/triage-labels.md` — ラベル作成手順の翻案
+- `docs/adr/README.md` — ADR を記録する基準（3 条件）の翻案
+- `CONTEXT.md` — 用語集の書式と書き方の指針の翻案
 - `docs/skills-catalog.md` — 各 SKILL.md の description を機械的に抽出した生成物
+
+**このテンプレートから作ったリポジトリでも、上記のいずれかを残す限り `NOTICE` を残すこと。** MIT の条件は複写のたびに引き継がれる。
 
 MIT License の全文は上記リポジトリの LICENSE を参照してください。同ライセンスは、複製または実質的部分の再配布にあたって著作権表示と許諾表示を含めることを求めています。
 
 ---
 
-以下のツールは CI から実行しているだけで、このリポジトリに再配布していません。したがって著作権表示の義務は生じませんが、参考として記載します。
+以下のツールは実行しているだけで、このリポジトリに再配布していません。したがって著作権表示の義務は生じませんが、参考として記載します。
 
-- gitleaks — https://github.com/gitleaks/gitleaks
-- NVIDIA SkillSpector — https://github.com/NVIDIA/SkillSpector （Apache License 2.0）
-- skills CLI — https://github.com/vercel-labs/skills
+- gitleaks — https://github.com/gitleaks/gitleaks （CI から実行）
+- NVIDIA SkillSpector — https://github.com/NVIDIA/SkillSpector （Apache License 2.0、CI から実行）
+- skills CLI — https://github.com/vercel-labs/skills （skill の導入時に利用者が実行）

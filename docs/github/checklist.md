@@ -1,6 +1,6 @@
 # GitHub 層のセットアップ確認
 
-導入後に一度だけ実行して、手順の抜けが無いかを確かめる。**この確認は自動化されていない。** 抜けたまま運用されることを防ぐ仕組みは無いので、必ず目視で通すこと。
+GitHub を使う場合に、`docs/checklist.md`（ホスティング非依存の確認）に加えて通す項目。
 
 ## 1. workflow が動いているか
 
@@ -28,22 +28,15 @@ gh api repos/{owner}/{repo}/branches/main/protection --jq '.required_status_chec
 
 ## 4. required check の名前が一致しているか
 
-上の出力と、`.github/workflows/security.yml` の `jobs:` 直下のキーを見比べる。食い違っていると、変更提案が永久にマージできなくなる。
-
-## 5. テンプレートの残りカスが消えているか
-
 ```
-grep -rl "my-development-template-for-github-copilot" --include='*.md' .
-ls docs/template/ 2>/dev/null
+gh api repos/{owner}/{repo}/branches/main/protection --jq '.required_status_checks.contexts[]'
+python3 -c "import yaml;print(*yaml.safe_load(open('.github/workflows/security.yml'))['jobs'])"
 ```
 
-前者は README のタイトルなどにテンプレート名が残っていないかの確認。後者は `docs/template/`（テンプレート自身の設計記録）を消したかの確認。**複写先には不要なので削除する。**
+2 つの出力が一致すること。食い違っていると、報告されないチェックを待って変更提案が永久にマージできなくなる。
 
-## 6. 用語集と ADR が空か
+**job を減らしたときは required check からも外すこと。** 順序を誤ると同じ状態になる。
 
-```
-cat CONTEXT.md
-ls docs/adr/
-```
+## 5. CI が実際に緑になるか
 
-`CONTEXT.md` に他プロジェクトの用語が残っていないこと。`docs/adr/` に `README.md` 以外が無いこと。残っていると、エージェントが他プロジェクトの語彙をこのプロジェクトの正典として扱う。
+required status check にする**前に**、変更提案を 1 つ作って CI を走らせ、緑になることを確認する。既存プロジェクトに導入した場合はとくに重要で、既存のバイナリ資産が原因で `skillspector` が落ちることがある。対処は `README.md` の「analyzer の劣化で落ちたとき」を参照。
