@@ -60,7 +60,7 @@ clone したら 2 つ。
 
 ```
 git config core.hooksPath .githooks          # 規約を実際に効かせる
-npx skills@1.5.22 add mattpocock/skills -g   # skill を導入する（未導入なら）
+npx skills@latest add mattpocock/skills -g   # skill を導入する（未導入なら）
 ```
 
 読むのは `docs/onboarding.md` の 1 ページだけでよい。
@@ -114,6 +114,8 @@ GitHub を使わないなら `docs/github/` ごと削除し、`.github/` の中�
 
 いずれも API キーを必要としない。SkillSpector は `--no-llm` で静的解析のみを行う。結果は Job Summary に出る。
 
+**このテンプレートの判定は `CAUTION` で固定されている。** skill の導入コマンドが版を指定しない形なので、供給網のリスクとして 3 箇所が検出される。**意図した状態**であり、CI は警告を出して通す（落ちるのは `DO_NOT_INSTALL` か analyzer の劣化のみ）。理由は `docs/skills.md` を参照。
+
 GitHub の Security タブ（SARIF）は使っていない。private リポジトリでは Code Security ライセンスが必要になり、配布物として成立しないため。
 
 ### analyzer の劣化で落ちたとき
@@ -138,7 +140,6 @@ skillspector scan docs/ --no-llm --format markdown -o "$RUNNER_TEMP/skillspector
 | gitleaks | `security.yml` の `GITLEAKS_VERSION` |
 | SkillSpector | `security.yml` の `SKILLSPECTOR_REVISION`（コミット SHA） |
 | actions/* | 各 workflow の `uses:` |
-| skills CLI | `docs/skills.md` の導入コマンドと更新コマンド |
 | skill カタログ | `python3 scripts/gen-skills-catalog.py` |
 
 ## 意図的に入れていないもの
