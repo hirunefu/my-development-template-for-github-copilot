@@ -9,7 +9,7 @@ GitHub を使う場合は、これに加えて `docs/github/checklist.md` も通
 ## 1. テンプレートの説明が残っていないか
 
 ```
-grep -rln "エージェント向け開発テンプレート\|まだ実案件で運用されていない" --include='*.md' --exclude=checklist.md .
+grep -rln "エージェント向け開発テンプレート\|実案件での運用実績はまだ無い" --include='*.md' --exclude=checklist.md .
 ```
 
 何もヒットしないこと。ヒットしたら、そのファイルはテンプレート自身の説明のまま残っている。README は自分のプロジェクトの説明に書き換える。
