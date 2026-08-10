@@ -41,28 +41,14 @@
 
 ## 使い方（新規リポジトリ）
 
-**Use this template** から新しいリポジトリを作り、次の 3 つを実行する。
-
-```
-python3 scripts/setup.py      # テンプレートを自分のプロジェクトのものにする
-                              # → docs/onboarding.md の空欄 3 つを埋める
-python3 scripts/verify.py     # 抜けが無いか機械的に確認する
-```
-
-`setup.py` が行うこと（`--dry-run` で事前に確認できる）。**2 回目の実行は拒否する**（`README.md` と `CONTEXT.md` を上書きするため）。
-
-- `docs/template/` の削除
-- `README.md` と `CONTEXT.md` を自分のプロジェクトのものに置き換え
-- テンプレート由来の ADR の削除
-- `README.md` の「CI の検査」「ツールのバージョン更新」は引き継ぐ（CI が落ちたときの対処手順のため）
-- GitHub を使わない場合は `docs/github/` と `.github/` の該当ファイルを削除（`--no-github`）
-
-**残りは人間にしかできない。**
-
-1. `docs/onboarding.md` の空欄 3 つ（プロジェクトの説明、環境の立ち上げ方、相談先）を埋める。参加者が最初に読むファイルになる
-2. skill を導入する（`docs/skills.md`）。**`/setup-matt-pocock-skills` は選ばなくてよい** — 実行するとこのテンプレートの設定を上書きしてしまうため、使い道が無い
-3. GitHub を使うなら `docs/github/` の手順を上から実行する（ラベル作成 → CI をマージ → **緑を確認** → ブランチ保護）
-4. この README の説明部分を自分のプロジェクトの内容にする。**「CI の検査」「analyzer の劣化で落ちたとき」「ツールのバージョン更新」の 3 節は残す** — CI が落ちたときの唯一の対処手順がここにある
+1. **Use this template** から新しいリポジトリを作る
+2. `docs/template/` を削除する
+3. `README.md` を自分のプロジェクトの説明に書き換える。**「CI の検査」「analyzer の劣化で落ちたとき」「ツールのバージョン更新」の 3 節は残す** — CI が落ちたときの唯一の対処手順がここにある
+4. `CONTEXT.md` の 1 行目をプロジェクト名にする。**Language 節は空のままでよい**
+5. `docs/onboarding.md` の空欄 4 つ（説明、環境の立ち上げ方とコードの場所、タスク管理、相談先）を埋める。参加者が最初に読むファイルになる
+6. skill を導入する（`docs/skills.md`）。**`setup-matt-pocock-skills` は選ばなくてよい** — 実行するとこのテンプレートの設定を上書きしてしまうため、使い道が無い
+7. GitHub を使うなら `docs/github/` の手順を上から実行する（ラベル作成 → CI をマージ → **緑を確認** → ブランチ保護）
+8. `docs/checklist.md` で抜けが無いか確認する。GitHub を使うなら `docs/github/checklist.md` も
 
 用語が固まったら `CONTEXT.md`、設計を決めたら `docs/adr/` に追記する。**先回りして空のファイルを埋めない。**
 
@@ -70,11 +56,14 @@ python3 scripts/verify.py     # 抜けが無いか機械的に確認する
 
 ## 参加する人がやること
 
+clone したら 2 つ。
+
 ```
-python3 scripts/start.py
+git config core.hooksPath .githooks          # 規約を実際に効かせる
+npx skills@1.5.22 add mattpocock/skills -g   # skill を導入する（未導入なら）
 ```
 
-skill の導入状況と git hook を確認して、足りなければ何をすればよいかを表示する。読むのは `docs/onboarding.md` の 1 ページだけでよい。
+読むのは `docs/onboarding.md` の 1 ページだけでよい。
 
 ## 構成
 
@@ -93,13 +82,9 @@ skill の導入状況と git hook を確認して、足りなければ何をす�
 | `docs/adopt-existing.md` | 既存プロジェクトへの導入手順 |
 | `docs/onboarding.md` | 参加した人が読む 1 ページ（雛形）。**これだけで作業を始められる** |
 | `docs/workflow.md` | 全体の流れ・役割・図。必要になったときだけ引く |
-| `docs/checklist.md` | 導入後の確認項目（機械化できないものだけ） |
-| `scripts/setup.py` | テンプレートを自分のプロジェクトのものにする |
-| `scripts/start.py` | 参加した人が作業できる状態にする |
-| `scripts/verify.py` | 設定の抜けを機械的に確認する |
+| `docs/checklist.md` | 導入後の確認項目 |
 | `scripts/gen-skills-catalog.py` | カタログの生成 |
 | `.githooks/pre-push` | 既定ブランチへの直接 push と履歴の書き換えを実際に止める |
-| `.template-repo` | テンプレート本体の目印。`setup.py` が消す（複写先には残さない） |
 
 ### GitHub 層（任意）
 
@@ -110,6 +95,7 @@ GitHub を使わないなら `docs/github/` ごと削除し、`.github/` の中�
 | `docs/github/issue-tracker.md` | GitHub Issues の操作 |
 | `docs/github/triage-labels.md` | ラベルの作成 |
 | `docs/github/branch-protection.md` | ブランチ保護の設定 |
+| `docs/github/checklist.md` | セットアップ確認項目 |
 | `.github/workflows/security.yml` | gitleaks と SkillSpector による検査 |
 | `.github/scripts/check-skillspector.py` | SkillSpector の判定 |
 
@@ -121,13 +107,10 @@ GitHub を使わないなら `docs/github/` ごと削除し、`.github/` の中�
 
 | job | 何を見るか | 落ちる条件 |
 | --- | --- | --- |
-| `verify` | 設定の抜け（`scripts/verify.py` と同じもの） | 雛形が埋まっていない、リンクが切れている、指示ファイルが壊れている など |
 | `gitleaks` | 履歴全体への秘密の混入 | 秘密を検出した |
 | `skillspector` | エージェントが読む資産の prompt injection やデータ持ち出しの兆候 | 判定が `DO_NOT_INSTALL`、または analyzer が 1 件でも劣化した |
 
-**同じ検査をローカルと CI の両方で走らせている。** ローカルで `python3 scripts/verify.py` を実行すれば、`gh` の認証がある分だけラベル・ブランチ保護・required check の名前一致まで見る。CI 側は認証しないのでその 4 項目はスキップされる。
-
-**required status check に追加するのは、その job が実際に緑になってから。** 順序を逆にすると、報告されない check を待って変更提案が永久にマージできなくなる。`scripts/verify.py` はこの不一致を検出する。
+**required status check に追加するのは、その job が実際に緑になってから。** 順序を逆にすると、報告されない check を待って変更提案が永久にマージできなくなる。確認手順は `docs/github/checklist.md` の項目 4。
 
 いずれも API キーを必要としない。SkillSpector は `--no-llm` で静的解析のみを行う。結果は Job Summary に出る。
 
@@ -176,8 +159,7 @@ skillspector scan docs/ --no-llm --format markdown -o "$RUNNER_TEMP/skillspector
 - **成果物そのものの質を機械で検査する段が無い。** CI が見ているのは秘密の混入と設定の抜けであって、変更が正しいか、設計判断が妥当かは見ていない。品質を担保しているのは人間のレビューと、エージェントがドメイン文書を読むかどうかである
 - **「ドメインとの照合」は規約であって仕組みではない。** `AGENTS.md` は探索の前と変更提案を出す前の 2 回照合するよう求めるが、守らせる手段は無い。守られたかどうかも検出できない
 - **複写後に更新が届かない。** テンプレート側を改善しても、既に複写されたリポジトリには反映されない。反映は各リポジトリで手作業になる
-- **参加者ガイドの中身は検査できない。** `scripts/verify.py` は空欄が埋まっているかは見るが、書いてある手順が実際に通るかは分からない。知らない人に読ませて確かめるしかない
-- **jj（jujutsu）利用者に git hook が効かない。** `jj git push` は git hook を実行しないため、既定ブランチへの直接 push と履歴の書き換えを止められない（実測で確認）
+- **セットアップの抜けを自動検出できない。** 確認はチェックリストによる目視のみ。リンク切れ、required check 名の不一致、参加者ガイドの空欄は、誰かが `docs/checklist.md` を通さない限り気づかれない
 - **skill の中身が固定できていない。** 導入コマンドで固定できるのはインストーラ CLI までで、skill 本体は取得時点の上流が入る（`docs/skills.md` を参照）
 - **SkillSpector の依存ツリーが固定されていない。** SkillSpector 本体はコミット SHA で固定しているが、`pip install` が引く 100 個近い依存は毎回解決される。上流の lockfile を使えば塞げるが、CI に別のパッケージマネージャを持ち込むことになるため見送っている
 - **日本語で書かれている。** 想定利用者が日本語話者のチームであることを前提にしている

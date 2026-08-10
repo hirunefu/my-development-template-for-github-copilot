@@ -47,14 +47,10 @@ docs/skills.md
 docs/skills-authoring.md
 docs/onboarding.md
 docs/workflow.md
-scripts/verify.py
-scripts/start.py
 .githooks/pre-push
 ```
 
-**`scripts/` と `.githooks/` を落とさないこと。** `docs/checklist.md` と `docs/onboarding.md` はこの 2 つを前提に書かれていて、片方だけ持ち込むと手順が成立しない。
-
-**`scripts/setup.py` はコピーしない。** 新規複写用で、既存プロジェクトの `README.md` と `CONTEXT.md` を雛形で上書きしてしまう。
+**`.githooks/` を落とさないこと。** `docs/onboarding.md` と `docs/checklist.md` がこれを前提に書かれている。持ち込んだら `git config core.hooksPath .githooks` を各自が実行する必要がある。
 
 `NOTICE` を含めるのは、`docs/agents/` が MIT の上流テンプレートからの派生物だから。**残す限り帰属表示も一緒に持ち込む必要がある。** 導入先に既に `NOTICE` がある場合は、その節を追記する形にする。
 
@@ -118,11 +114,10 @@ gh api repos/{owner}/{repo}/branches/main/protection > /tmp/bp-backup.json
 
 ## 確認
 
-`python3 scripts/verify.py` を実行する。ただし新規複写を前提にした項目があるので、既存プロジェクトでは次のように読み替える。
+`docs/checklist.md` を通す。ただし**項目 1・2・4 は新規複写向け**なので、既存プロジェクトでは次のように読み替える。
 
-- **テンプレートの説明が残っていない** — 該当しない。README は元のまま
-- **テンプレート自身の記録が消えている** — `docs/template/` をコピーしていなければ該当しない
-- **ADR が自分のものだけ** — 既存の ADR があるならそのまま。番号の重複だけ確認する
-- **用語集が自分のもの** — 既存の `CONTEXT.md` があるならそのまま
+- 項目 1（テンプレートの説明の残り）— 該当しない。README は元のまま
+- 項目 2（`docs/template/` の残り）— コピーしていなければ該当しない
+- 項目 4（`docs/adr/` が空か）— 既存の ADR があるならそのまま。番号の重複だけ確認する
 
-GitHub 層を入れたなら、`gh` を認証した状態で実行すること。ラベル・ブランチ保護・required check の名前一致も同時に見る。
+GitHub 層を入れたなら `docs/github/checklist.md` も通す。

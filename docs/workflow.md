@@ -160,7 +160,7 @@ skill ごとの振り分けは `docs/agents/issue-tracker.md` の表にある。
 | `docs/adr/` | 設計決定と、その理由。「なぜこうなっているのか」を調べるとき |
 | `docs/agents/domain.md` | `CONTEXT.md` と `docs/adr/` の読み方・書き方 |
 | `docs/github/`（あれば） | GitHub 固有の手順。ラベル、ブランチ保護、CI |
-| `scripts/verify.py` | 設定が壊れていないか確かめるとき |
+| `docs/checklist.md` | 設定が壊れていないか確かめるとき |
 
 `docs/template/` があっても読まなくてよい。このリポジトリの土台になったテンプレート自体の記録で、このプロジェクトの内容ではない。
 
