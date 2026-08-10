@@ -32,12 +32,12 @@ gh api repos/{owner}/{repo}/branches/main/protection --jq '.required_status_chec
 
 ```
 gh api repos/{owner}/{repo}/branches/main/protection --jq '.required_status_checks.contexts[]'
-python3 -c "import yaml;print(*yaml.safe_load(open('.github/workflows/security.yml'))['jobs'])"
+awk '/^jobs:/{j=1;next} j && /^[a-zA-Z]/{exit} j && /^  [a-z0-9_-]+:$/{gsub(/[ :]/,"");print}' .github/workflows/security.yml
 ```
 
-2 つの出力が一致すること。食い違っていると、報告されないチェックを待って変更提案が永久にマージできなくなる。
+2 つの出力が一致すること。**食い違っていると、報告されないチェックを待って変更提案が永久にマージできなくなる。**
 
-**job を減らしたときは required check からも外すこと。** 順序を誤ると同じ状態になる。
+**job を減らしたときは required check からも外すこと。** 順序を誤ると同じ状態になる。逆に job を増やしたときは、**その job が実際に緑になってから** required に加える。
 
 ## 5. CI が実際に緑になるか
 

@@ -28,7 +28,7 @@
 **先に、同名のファイルが既にあるかを確認する。**
 
 ```
-ls AGENTS.md CLAUDE.md CONTEXT.md NOTICE .github/copilot-instructions.md 2>/dev/null
+ls AGENTS.md CLAUDE.md CONTEXT.md NOTICE 2>/dev/null
 ```
 
 **存在するものは上書きしないこと。** 別名（`AGENTS.md.new` など）で置くか、いったん退避してから手順 2 で統合する。ここで上書きすると、統合すべき既存の内容が消える。
@@ -44,8 +44,13 @@ docs/agents/
 docs/adr/README.md
 docs/checklist.md
 docs/skills.md
+docs/skills-authoring.md
 docs/onboarding.md
+docs/workflow.md
+.githooks/pre-push
 ```
+
+**`.githooks/` を落とさないこと。** `docs/onboarding.md` と `docs/checklist.md` がこれを前提に書かれている。持ち込んだら `git config core.hooksPath .githooks` を各自が実行する必要がある。
 
 `NOTICE` を含めるのは、`docs/agents/` が MIT の上流テンプレートからの派生物だから。**残す限り帰属表示も一緒に持ち込む必要がある。** 導入先に既に `NOTICE` がある場合は、その節を追記する形にする。
 
